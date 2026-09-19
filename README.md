@@ -61,6 +61,47 @@ Ground Floor Commercial:       IN2877214100A1/L01/RET02
 
 ---
 
+## System Workflow
+
+The following flowchart outlines the end-to-end data pipeline from 2D file ingestion to 3D spatial modeling, encroachment analysis, and property card generation:
+
+```mermaid
+flowchart TD
+    subgraph Inputs ["1. Cadastral Ingestion"]
+        A["2D Boundary File<br/>(GeoJSON / DXF / KML)"] --> B["FastAPI Parser<br/>(/api/cadastre/parse-file)"]
+        A0["Manual Officer Entry<br/>(Khasra, Setbacks, FAR)"] --> B
+    end
+
+    subgraph Geometry ["2. Coordinate & Mesh Processing"]
+        B --> C["CRS Projection<br/>EPSG:4326 (WGS84) ➔ EPSG:32643 (UTM 43N)"]
+        C --> D["Planar Normal & Winding Verification<br/>(Shoelace Formula + Ear Clipping)"]
+        D --> E["Vertical Envelope Extrusion<br/>(Z_base to Z_roof using EGM2008 Datum)"]
+    end
+
+    subgraph Strata ["3. Volumetric & Ownership Partitioning"]
+        E --> F["Strata Slicing<br/>(Floor-level subdivisions)"]
+        F --> G["UDS Calculation<br/>(Proportional Carpet Area Allocation)"]
+        F --> H["Common Area Separation<br/>(Lift cores, staircases, utility shafts)"]
+    end
+
+    subgraph Compliance ["4. Spatial Analysis & Digital Twin"]
+        E --> I["Encroachment Collision Check<br/>(SAT / AABB vs Road RoW Buffers)"]
+        I -->|Overlap Detected| J["Flag Crimson Collision Volume<br/>(e.g., Khasra #202 Balcony Overhang)"]
+        I -->|Within Limits| K["Three.js 3D Colony View"]
+        G --> K
+        H --> K
+        L["Subterranean Layers<br/>(Metro Tunnel, Gas, Stormwater)"] --> K
+    end
+
+    subgraph Output ["5. Identity & Statutory Records"]
+        G --> M["14-Digit ULPIN Generation<br/>(&lt;14-Digit-Root&gt;/&lt;Floor&gt;/&lt;Unit&gt;)"]
+        M --> N["Identity Protection<br/>(Zero-Knowledge SHA-256 e-KYC Token)"]
+        N --> O["Statutory 3D Property Card<br/>(With Dynamic Verification QR Code)"]
+    end
+```
+
+---
+
 ## Repository Structure
 
 ```
