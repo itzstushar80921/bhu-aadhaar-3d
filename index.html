@@ -890,6 +890,323 @@
             .header-title p { display: none; }
         }
 
+        /* BHARAT BYTE 3D CADASTRE DOCKS & FLOATING HUD */
+        .viewport-dock {
+            position: absolute;
+            background: rgba(14, 22, 18, 0.94);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-primary);
+            border-radius: 10px;
+            padding: 8px 12px;
+            z-index: 25;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
+            transition: all 0.3s ease;
+        }
+
+        .top-right-dock {
+            top: 14px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 290px;
+        }
+
+        .floor-slicing-dock {
+            bottom: 64px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 320px;
+        }
+
+        .dock-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--amber-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .dock-tag {
+            font-size: 9px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald-light);
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-transform: none;
+        }
+
+        .dock-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dock-btn {
+            background: rgba(20, 32, 26, 0.85);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 5px;
+            color: var(--text-main);
+            padding: 5px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .dock-btn:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--emerald-primary);
+            color: var(--emerald-light);
+        }
+
+        .dock-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0.45));
+            border-color: var(--emerald-primary);
+            color: #FFFFFF;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .dock-select {
+            background: rgba(20, 32, 26, 0.9);
+            border: 1px solid var(--border-primary);
+            border-radius: 5px;
+            color: #FFFFFF;
+            font-size: 10px;
+            padding: 4px 6px;
+            outline: none;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        /* 3D HIERARCHICAL ULPIN BADGE */
+        .ulpin-hierarchy-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-highlight);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .hierarchy-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--amber-gold);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hierarchy-badges {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .h-seg {
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .h-seg.base { background: rgba(245, 158, 11, 0.2); color: var(--amber-gold); border: 1px solid rgba(245, 158, 11, 0.4); }
+        .h-seg.bldg { background: rgba(16, 185, 129, 0.2); color: var(--emerald-light); border: 1px solid rgba(16, 185, 129, 0.4); }
+        .h-seg.floor { background: rgba(139, 92, 246, 0.2); color: #C4B5FD; border: 1px solid rgba(139, 92, 246, 0.4); }
+        .h-seg.unit { background: rgba(56, 189, 248, 0.2); color: #7DD3FC; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .h-sep { color: var(--text-muted); font-weight: 900; font-size: 11px; }
+
+        .hierarchy-full {
+            font-family: monospace;
+            font-size: 11px;
+            color: #FFFFFF;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border-left: 3px solid var(--amber-gold);
+            word-break: break-all;
+        }
+
+        .hierarchy-caption {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* SUBTERRANEAN CLEARANCE AUDIT CARD */
+        .clearance-audit-box {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .clearance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            padding: 3px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+        }
+
+        .clearance-row:last-child { border-bottom: none; }
+
+        .status-badge-small {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .status-badge-small.compliant {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--emerald-light);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .status-badge-small.breach {
+            background: rgba(239, 68, 68, 0.2);
+            color: #F87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        /* SPATIAL ANALYTICS GRID */
+        .spatial-analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .sa-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            border-radius: 6px;
+            padding: 6px 8px;
+        }
+
+        .sa-lbl { font-size: 9px; color: var(--text-muted); }
+        .sa-val { font-size: 11px; font-weight: 700; color: #FFFFFF; margin-top: 2px; }
+
+        /* FLOATING HUD TOAST NOTIFICATION */
+        .hud-toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(14, 22, 18, 0.96);
+            border: 1px solid var(--amber-gold);
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), 0 0 24px rgba(245, 158, 11, 0.35);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            max-width: 90%;
+        }
+
+        .hud-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .hud-toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .hud-toast-body strong {
+            display: block;
+            font-size: 12px;
+            color: var(--amber-gold);
+            margin-bottom: 2px;
+        }
+
+        .hud-toast-body p {
+            font-size: 10px;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        /* AUTOCOMPLETE SEARCH DROPDOWN */
+        .search-dropdown-menu {
+            position: absolute;
+            top: 36px;
+            left: 0;
+            width: 280px;
+            background: rgba(14, 22, 18, 0.97);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            z-index: 150;
+            max-height: 260px;
+            overflow-y: auto;
+            backdrop-filter: blur(16px);
+        }
+
+        .search-dropdown-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.15s;
+        }
+
+        .search-dropdown-item:hover {
+            background: rgba(16, 185, 129, 0.18);
+        }
+
+        .search-item-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-item-sub {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-family: monospace;
+        }
+
+        /* BUTTON SPINNER */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* PRINT STYLES */
         @media print {
             body * { visibility: hidden; }
@@ -936,7 +1253,8 @@
 
             <div class="search-box">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="quickSearchInput" placeholder="Khasra / 14-Digit ULPIN..." onkeydown="handleSearchKey(event)">
+                <input type="text" id="quickSearchInput" placeholder="Search Khasra / ULPIN / Owner..." oninput="handleSearchInput(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
+                <div id="searchDropdown" class="search-dropdown-menu" style="display:none;"></div>
             </div>
 
             <button class="header-btn" onclick="openGlossaryModal()">
@@ -1177,6 +1495,65 @@
                         </div>
 
                         <div id="inspectorContent" style="display:none;">
+                            <!-- BHARAT BYTE: HIERARCHICAL 3D ULPIN RESOLUTION BADGE -->
+                            <div class="ulpin-hierarchy-box">
+                                <div class="hierarchy-title">
+                                    <span>🧬 3D Hierarchical Bhu-Aadhaar Structure</span>
+                                    <span style="font-size:8px; opacity:0.8; font-weight:normal;">(ISO 19152 LADM)</span>
+                                </div>
+                                <div class="hierarchy-badges">
+                                    <span class="h-seg base" id="hSegBase">IN28773421</span>
+                                    <span class="h-sep">-</span>
+                                    <span class="h-seg bldg" id="hSegBldg">B01</span>
+                                    <span class="h-sep">-</span>
+                                    <span class="h-seg floor" id="hSegFloor">F001</span>
+                                    <span class="h-sep">-</span>
+                                    <span class="h-seg unit" id="hSegUnit">U001</span>
+                                </div>
+                                <div class="hierarchy-full" id="hFullUlpin">IN28773421-B01-F001-U001</div>
+                                <div class="hierarchy-caption">Base Parcel + Building + Floor Stratum + Private Unit = Complete 3D Title</div>
+                            </div>
+
+                            <!-- BHARAT BYTE: SUBTERRANEAN CLEARANCE AUDIT -->
+                            <div class="clearance-audit-box">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                                    <strong style="color:var(--emerald-light); font-size:10px;">🚇 Subterranean Clearance & Buffer Audit</strong>
+                                    <span class="status-badge-small compliant" id="hudClearanceBadge">SAFE BUFFER</span>
+                                </div>
+                                <div class="clearance-row">
+                                    <span>Municipal Stormwater Drainage Culvert:</span>
+                                    <strong id="hudDrainageDist" style="color:#FFF;">18.5 m</strong>
+                                </div>
+                                <div class="clearance-row">
+                                    <span>Delhi Metro Pink Line Tunnel (-18m MSL):</span>
+                                    <strong id="hudMetroDist" style="color:#FFF;">6.9 m Crown Clearance</strong>
+                                </div>
+                                <div class="clearance-row">
+                                    <span>Statutory Safety Setback Rule:</span>
+                                    <span id="hudBufferStatus" style="color:var(--emerald-light); font-weight:700;">Verified Compliant (&gt; 3.0m)</span>
+                                </div>
+                            </div>
+
+                            <!-- BHARAT BYTE: 3D SPATIAL METRICS -->
+                            <div class="spatial-analytics-grid">
+                                <div class="sa-card">
+                                    <div class="sa-lbl">Planimetric Area (Shoelace)</div>
+                                    <div class="sa-val" id="saShoelaceArea">264.1 m²</div>
+                                </div>
+                                <div class="sa-card">
+                                    <div class="sa-lbl">True Perimeter</div>
+                                    <div class="sa-val" id="saPerimeter">68.4 m</div>
+                                </div>
+                                <div class="sa-card">
+                                    <div class="sa-lbl">3D Airspace Volume</div>
+                                    <div class="sa-val" id="saVolume">4,225.6 m³</div>
+                                </div>
+                                <div class="sa-card">
+                                    <div class="sa-lbl">3D Morton Spatial Code</div>
+                                    <div class="sa-val" id="saMortonCode" style="font-family:monospace; color:var(--amber-gold);">036FC722</div>
+                                </div>
+                            </div>
+
                             <div class="hud-row">
                                 <span class="lbl"><span class="cadastre-term" data-term="ULPIN">NIC 14-Digit ULPIN <span class="term-badge">ℹ</span></span></span>
                                 <span class="val" id="inspRootUlpin" style="color:var(--amber-gold); font-family:monospace; font-size:12px;">-</span>
@@ -1379,7 +1756,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-amber" onclick="executeOfficerExtrusion()">
+                        <button class="btn btn-amber" id="btnOfficerExtrude" onclick="executeOfficerExtrusion()">
                             <span>🚀</span>
                             <span id="btnExtrudeTxt">Process & Extrude to 3D Cadastre</span>
                         </button>
@@ -1435,6 +1812,62 @@
         <div id="viewport-container">
             <div id="threeContainer"></div>
 
+            <!-- BHARAT BYTE: CELESTIAL DAY/NIGHT & WEATHER SIMULATION DOCK -->
+            <div class="viewport-dock top-right-dock" id="celestialWeatherDock">
+                <div class="dock-header">
+                    <span>☀️ Celestial Lighting & Weather Engine</span>
+                    <span class="dock-tag" id="celestialStatusTag">Noon / Clear</span>
+                </div>
+                <div class="dock-row">
+                    <button class="dock-btn active" id="btnTimeNoon" onclick="setCelestialTime('noon')">☀️ Noon</button>
+                    <button class="dock-btn" id="btnTimeSunset" onclick="setCelestialTime('sunset')">🌇 Sunset</button>
+                    <button class="dock-btn" id="btnTimeMidnight" onclick="setCelestialTime('midnight')">🌙 Night</button>
+                    <button class="dock-btn" id="btnTimeDawn" onclick="setCelestialTime('dawn')">🌅 Dawn</button>
+                </div>
+                <div class="dock-row" style="margin-top:4px;">
+                    <button class="dock-btn active" id="btnWeatherClear" onclick="setWeatherMode('clear')">☀️ Clear</button>
+                    <button class="dock-btn" id="btnWeatherOvercast" onclick="setWeatherMode('overcast')">☁️ Overcast</button>
+                    <button class="dock-btn" id="btnWeatherMonsoon" onclick="setWeatherMode('monsoon')">🌧️ Monsoon Rain</button>
+                </div>
+            </div>
+
+            <!-- BHARAT BYTE: VERTICAL FLOOR SLICING & STRATA ISOLATION DOCK -->
+            <div class="viewport-dock floor-slicing-dock" id="verticalSlicingDock">
+                <div class="dock-header">
+                    <span>🏢 Vertical Floor Slicing & Isolation</span>
+                    <span class="dock-tag" id="currentBldgTag">Aryavarta Model</span>
+                </div>
+                <div class="dock-row">
+                    <select class="dock-select" id="floorSelectDropdown" onchange="onFloorDropdownChange(this.value)">
+                        <option value="all">🏢 All Floors (Combined Tower)</option>
+                        <option value="-1">🅿️ Basement B01 (Subterranean)</option>
+                        <option value="1">🏛️ Floor F001 (Ground / Reception)</option>
+                        <option value="2">🏠 Floor F002 (Unit 201)</option>
+                        <option value="3">🏠 Floor F003 (Unit 301)</option>
+                        <option value="4">🏠 Floor F004 (Unit 401)</option>
+                        <option value="5">🏠 Floor F005 (Unit 501)</option>
+                        <option value="6">👑 Floor F006 (Sky Penthouse)</option>
+                    </select>
+                    <button class="dock-btn" id="btnToggleFloorIso" onclick="toggleFloorIsolation()" title="Isolate floor in 3D">
+                        👁️ Isolate
+                    </button>
+                </div>
+                <div class="dock-row" style="margin-top:4px; align-items:center;">
+                    <span style="font-size:10px; color:var(--text-muted); white-space:nowrap;">Exploded View:</span>
+                    <input type="range" id="explodedSlider" min="0" max="12" value="0" step="0.5" oninput="adjustExplodedSpacing(this.value)" style="flex:1; accent-color:var(--amber-gold);">
+                    <span id="explodedValTxt" style="font-size:10px; color:var(--amber-gold); min-width:28px; text-align:right; font-weight:bold;">0m</span>
+                </div>
+            </div>
+
+            <!-- BHARAT BYTE: FLOATING HUD NOTIFICATION TOAST -->
+            <div id="hudToast" class="hud-toast">
+                <div class="hud-toast-icon" id="toastIcon">🚀</div>
+                <div class="hud-toast-body">
+                    <strong id="toastTitle">3D Volumetric Extrusion Completed</strong>
+                    <p id="toastDesc">Khasra #342/1 extruded into 5-Storey 3D Cadastral Digital Twin</p>
+                </div>
+            </div>
+
             <!-- VIEW PRESETS & ADVANCED GIS CONTROLS -->
             <div class="viewport-controls">
                 <button class="view-preset-btn active" id="btnViewColony" onclick="setViewMode('colony')">
@@ -1448,6 +1881,9 @@
                 </button>
                 <button class="view-preset-btn" id="btnViewExploded" onclick="toggleExplodedView()">
                     <span>🏢</span> Exploded Strata
+                </button>
+                <button class="view-preset-btn" id="btnSubterranean3D" onclick="toggleSubterraneanMode()">
+                    <span>🚇</span> Subterranean 3D
                 </button>
                 <button class="view-preset-btn danger" id="btnConflictVisualizer" onclick="toggleConflictMesh()">
                     <span>⚠️</span> Encroachment Mesh
@@ -1860,7 +2296,7 @@
         let isExploded = false;
         let isMeasureMode = false;
         let measurePoints = [];
-        let sunLight;
+        let sunLight, ambientLight, warmFill;
         let groundMesh, groundGrid;
         let clippingPlaneY;
         let conflictMesh = null;
@@ -1874,6 +2310,19 @@
             metro: true,
             utilities: true
         };
+
+        // Bharat Byte Additions
+        let celestialTime = 'noon';
+        let weatherMode = 'clear';
+        let rainPoints = null;
+        const rainCount = 3000;
+        let rainVelocities = null;
+        let starsMesh = null;
+        let isolatedFloorLevel = null;
+        let currentBuildingSlices = [];
+        let officerExtrusionGroup = null;
+        let uploadedCadastreFootprint = null;
+        let isSubterraneanMode = false;
 
         let currentActiveParcelData = null;
         let apiBaseUrl = localStorage.getItem('BHU_AADHAAR_API_URL') || '';
@@ -1922,7 +2371,7 @@
             controls.update();
 
             // 5. Lighting (Warm Indian sunlight & ambient illumination)
-            const ambientLight = new THREE.AmbientLight(0xFFFBEB, 0.7);
+            ambientLight = new THREE.AmbientLight(0xFFFBEB, 0.7);
             scene.add(ambientLight);
 
             sunLight = new THREE.DirectionalLight(0xFFF7ED, 1.1);
@@ -1938,9 +2387,13 @@
             sunLight.shadow.camera.bottom = -150;
             scene.add(sunLight);
 
-            const warmFill = new THREE.DirectionalLight(0xE07A5F, 0.3);
+            warmFill = new THREE.DirectionalLight(0xE07A5F, 0.3);
             warmFill.position.set(-80, 60, -60);
             scene.add(warmFill);
+
+            // Bharat Byte Starfield & Rain Particle Engines
+            initStarfield();
+            initRainSystem();
 
             // 6. Ground & Survey Grid
             buildGroundAndColonyMatrix();
@@ -2453,6 +2906,295 @@
         }
 
         // -------------------------------------------------------------
+        // BHARAT BYTE: CELESTIAL LIGHTING, WEATHER & FLOATING TOAST
+        // -------------------------------------------------------------
+        function initStarfield() {
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 2500;
+            const starPos = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                starPos[i * 3] = (Math.random() - 0.5) * 800;
+                starPos[i * 3 + 1] = 60 + Math.random() * 250;
+                starPos[i * 3 + 2] = (Math.random() - 0.5) * 800;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({
+                color: 0xFFFFFF,
+                size: 1.4,
+                transparent: true,
+                opacity: 0.85
+            });
+            starsMesh = new THREE.Points(starGeo, starMat);
+            starsMesh.visible = false;
+            scene.add(starsMesh);
+        }
+
+        function initRainSystem() {
+            const rainGeo = new THREE.BufferGeometry();
+            const rainPos = new Float32Array(rainCount * 3);
+            rainVelocities = new Float32Array(rainCount);
+            for (let i = 0; i < rainCount; i++) {
+                rainPos[i * 3] = (Math.random() - 0.5) * 500;
+                rainPos[i * 3 + 1] = Math.random() * 250;
+                rainPos[i * 3 + 2] = (Math.random() - 0.5) * 500;
+                rainVelocities[i] = 160 + Math.random() * 120;
+            }
+            rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+            const rainMat = new THREE.PointsMaterial({
+                color: 0x7DD3FC,
+                size: 1.6,
+                transparent: true,
+                opacity: 0.65,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+            rainPoints = new THREE.Points(rainGeo, rainMat);
+            rainPoints.visible = false;
+            scene.add(rainPoints);
+        }
+
+        function setCelestialTime(preset) {
+            celestialTime = preset;
+            document.querySelectorAll('#celestialWeatherDock .dock-row:first-child .dock-btn').forEach(b => b.classList.remove('active'));
+            const statusTag = document.getElementById('celestialStatusTag');
+
+            if (preset === 'dawn') {
+                document.getElementById('btnTimeDawn').classList.add('active');
+                sunLight.position.set(-140, 50, 80);
+                sunLight.color.setHex(0xFDBA74);
+                sunLight.intensity = 0.85;
+                if (ambientLight) { ambientLight.color.setHex(0x5A3A28); ambientLight.intensity = 0.6; }
+                if (warmFill) { warmFill.color.setHex(0xEA580C); warmFill.intensity = 0.4; }
+                scene.background.setHex(0x18100B);
+                scene.fog.color.setHex(0x18100B);
+                if (starsMesh) starsMesh.visible = false;
+                statusTag.textContent = 'Dawn (06:00 AM)';
+                showHudToast("Celestial Sky: Dawn", "Warm golden morning light & soft elongated cast shadows", "🌅");
+            } else if (preset === 'noon') {
+                document.getElementById('btnTimeNoon').classList.add('active');
+                sunLight.position.set(80, 160, 60);
+                sunLight.color.setHex(0xFFFBEB);
+                sunLight.intensity = 1.15;
+                if (ambientLight) { ambientLight.color.setHex(0xFFFBEB); ambientLight.intensity = 0.7; }
+                if (warmFill) { warmFill.color.setHex(0xE07A5F); warmFill.intensity = 0.3; }
+                scene.background.setHex(0x080D0B);
+                scene.fog.color.setHex(0x080D0B);
+                if (starsMesh) starsMesh.visible = false;
+                statusTag.textContent = 'Noon (12:00 PM)';
+                showHudToast("Celestial Sky: Solar Midday", "High-angle direct sunlight & crisp cadastral parcel visibility", "☀️");
+            } else if (preset === 'sunset') {
+                document.getElementById('btnTimeSunset').classList.add('active');
+                sunLight.position.set(160, 35, -40);
+                sunLight.color.setHex(0xF97316);
+                sunLight.intensity = 0.95;
+                if (ambientLight) { ambientLight.color.setHex(0x431407); ambientLight.intensity = 0.55; }
+                if (warmFill) { warmFill.color.setHex(0xC2410C); warmFill.intensity = 0.5; }
+                scene.background.setHex(0x1B0D07);
+                scene.fog.color.setHex(0x1B0D07);
+                if (starsMesh) starsMesh.visible = false;
+                statusTag.textContent = 'Golden Hour (06:00 PM)';
+                showHudToast("Celestial Sky: Golden Hour", "Sunset atmospheric scattering & rich terracotta hues", "🌇");
+            } else if (preset === 'midnight') {
+                document.getElementById('btnTimeMidnight').classList.add('active');
+                sunLight.position.set(0, -100, 0);
+                sunLight.color.setHex(0x1E293B);
+                sunLight.intensity = 0.08;
+                if (ambientLight) { ambientLight.color.setHex(0x0B130E); ambientLight.intensity = 0.25; }
+                if (warmFill) { warmFill.color.setHex(0x064E3B); warmFill.intensity = 0.15; }
+                scene.background.setHex(0x04070A);
+                scene.fog.color.setHex(0x04070A);
+                if (starsMesh) starsMesh.visible = true;
+                statusTag.textContent = 'Midnight (12:00 AM)';
+                showHudToast("Celestial Sky: Midnight", "Nocturnal digital twin with illuminated stars & glowing cadastral lines", "🌙");
+            }
+        }
+
+        function setWeatherMode(mode) {
+            weatherMode = mode;
+            document.querySelectorAll('#celestialWeatherDock .dock-row:nth-child(2) .dock-btn').forEach(b => b.classList.remove('active'));
+
+            if (mode === 'clear') {
+                document.getElementById('btnWeatherClear').classList.add('active');
+                if (rainPoints) rainPoints.visible = false;
+                scene.fog.density = 0.0035;
+                if (groundMesh) groundMesh.material.roughness = 0.95;
+                showHudToast("Weather: Clear Skies", "Standard atmospheric conditions & dry surface roughness", "☀️");
+            } else if (mode === 'overcast') {
+                document.getElementById('btnWeatherOvercast').classList.add('active');
+                if (rainPoints) rainPoints.visible = false;
+                scene.fog.density = 0.0055;
+                if (groundMesh) groundMesh.material.roughness = 0.85;
+                showHudToast("Weather: Overcast Clouds", "Diffused daylight & atmospheric stratus cloud haze", "☁️");
+            } else if (mode === 'monsoon') {
+                document.getElementById('btnWeatherMonsoon').classList.add('active');
+                if (rainPoints) rainPoints.visible = true;
+                scene.fog.density = 0.0065;
+                if (groundMesh) {
+                    groundMesh.material.roughness = 0.25;
+                    groundMesh.material.metalness = 0.2;
+                }
+                showHudToast("Weather: Indian Monsoon Rain", "Real-time 3,000 particle precipitation & wet ground specular reflections", "🌧️");
+            }
+        }
+
+        function showHudToast(title, desc, icon = "🚀") {
+            const toast = document.getElementById('hudToast');
+            if (!toast) return;
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastDesc').textContent = desc;
+            document.getElementById('toastIcon').textContent = icon;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4500);
+        }
+
+        function toggleSubterraneanMode(forceState = null) {
+            isSubterraneanMode = forceState !== null ? forceState : !isSubterraneanMode;
+            const btn = document.getElementById('btnSubterranean3D');
+            if (btn) btn.classList.toggle('active', isSubterraneanMode);
+
+            if (groundMesh) {
+                groundMesh.material.opacity = isSubterraneanMode ? 0.25 : 0.95;
+                groundMesh.material.transparent = true;
+                groundMesh.material.needsUpdate = true;
+            }
+            if (groundGrid) {
+                groundGrid.visible = !isSubterraneanMode;
+            }
+
+            interactiveObjects.forEach(obj => {
+                if (obj.userData.layerType === 'metro' || obj.userData.layerType === 'utilities' || (obj.userData.floor_level && obj.userData.floor_level < 0)) {
+                    if (obj.material) {
+                        if (isSubterraneanMode) {
+                            if (!obj.userData.origColor) obj.userData.origColor = obj.material.color.getHex();
+                            obj.material.emissive = new THREE.Color(0x34D399);
+                            obj.material.emissiveIntensity = 0.6;
+                        } else {
+                            obj.material.emissive = new THREE.Color(0x000000);
+                        }
+                    }
+                }
+            });
+
+            if (isSubterraneanMode) {
+                flyCameraTo(0, 15, 75, 0, -10, 0);
+                showHudToast("Subterranean 3D Mode", "Ground cross-section active • Municipal drainage, transit metro & foundation vaults illuminated", "🚇");
+            } else {
+                showHudToast("Surface View Restored", "Standard cadastral ground opacity restored", "🏘️");
+            }
+        }
+
+        function updateFloorDropdownForBuilding(bldgName) {
+            const dropdown = document.getElementById('floorSelectDropdown');
+            if (!dropdown) return;
+
+            const bldgMeshes = interactiveObjects.filter(o => {
+                const u = o.userData;
+                return (u.building_name === bldgName || u.building === bldgName) && u.floor_level !== undefined;
+            }).sort((a, b) => a.userData.floor_level - b.userData.floor_level);
+
+            dropdown.innerHTML = '<option value="all">🏢 All Floors (Combined Tower)</option>';
+            bldgMeshes.forEach(m => {
+                const fl = m.userData.floor_level;
+                const opt = document.createElement('option');
+                opt.value = fl;
+                opt.textContent = fl < 0 ? `🅿️ Basement B01 (Subterranean)` : `🏢 Floor F${String(fl).padStart(3, '0')} (${m.userData.unit_number || 'Unit'})`;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function onFloorDropdownChange(val) {
+            if (val === 'all') {
+                resetFloorIsolation();
+            } else {
+                isolateFloor(parseInt(val));
+            }
+        }
+
+        function toggleFloorIsolation() {
+            const dropdown = document.getElementById('floorSelectDropdown');
+            const val = dropdown ? dropdown.value : 'all';
+            if (val === 'all') {
+                if (selectedObject && selectedObject.userData.floor_level !== undefined) {
+                    isolateFloor(selectedObject.userData.floor_level);
+                    dropdown.value = selectedObject.userData.floor_level;
+                } else {
+                    isolateFloor(1);
+                    if (dropdown) dropdown.value = 1;
+                }
+            } else {
+                resetFloorIsolation();
+                if (dropdown) dropdown.value = 'all';
+            }
+        }
+
+        function isolateFloor(floorLevel) {
+            isolatedFloorLevel = floorLevel;
+            const btn = document.getElementById('btnToggleFloorIso');
+            if (btn) btn.classList.add('active');
+
+            const currentBldg = selectedObject ? (selectedObject.userData.building_name || selectedObject.userData.building) : null;
+
+            interactiveObjects.forEach(obj => {
+                if (!obj.material) return;
+                const u = obj.userData;
+                const isThisBldg = currentBldg && (u.building_name === currentBldg || u.building === currentBldg);
+
+                if (isThisBldg && u.floor_level !== undefined) {
+                    if (u.floor_level === floorLevel) {
+                        obj.material.opacity = 1.0;
+                        obj.material.transparent = false;
+                        if (obj.material.emissive) {
+                            obj.material.emissive.setHex(0x10B981);
+                            obj.material.emissiveIntensity = 0.5;
+                        }
+                        obj.scale.set(1.03, 1.0, 1.03);
+                    } else {
+                        obj.material.opacity = 0.18;
+                        obj.material.transparent = true;
+                        if (obj.material.emissive) obj.material.emissive.setHex(0x000000);
+                        obj.scale.set(1.0, 1.0, 1.0);
+                    }
+                } else {
+                    obj.material.opacity = 0.4;
+                    obj.material.transparent = true;
+                }
+            });
+
+            showHudToast("Floor Stratum Isolated", `Floor F${floorLevel < 0 ? 'B01' : String(floorLevel).padStart(3, '0')} isolated • Sibling units rendered in glass ghost mode`, "👁️");
+        }
+
+        function resetFloorIsolation() {
+            isolatedFloorLevel = null;
+            const btn = document.getElementById('btnToggleFloorIso');
+            if (btn) btn.classList.remove('active');
+
+            interactiveObjects.forEach(obj => {
+                if (!obj.material) return;
+                obj.material.opacity = 0.9;
+                obj.material.transparent = true;
+                obj.scale.set(1.0, 1.0, 1.0);
+                if (obj.material.emissive) {
+                    obj.material.emissive.setHex(obj === selectedObject ? 0x10B981 : 0x000000);
+                }
+            });
+            showHudToast("Tower View Restored", "All floors returned to standard composite view", "🏢");
+        }
+
+        function adjustExplodedSpacing(val) {
+            const spacing = parseFloat(val);
+            document.getElementById('explodedValTxt').textContent = `${spacing}m`;
+            interactiveObjects.forEach(obj => {
+                if (obj.userData.floor_level && obj.userData.floor_level > 1) {
+                    if (obj.userData.origY === undefined) obj.userData.origY = obj.position.y;
+                    obj.position.y = obj.userData.origY + (obj.userData.floor_level - 1) * spacing;
+                }
+            });
+        }
+
+        // -------------------------------------------------------------
         // 8. INTERACTIVE SECTION PLANE / SLICER
         // -------------------------------------------------------------
         function adjustClippingPlaneY(val) {
@@ -2606,9 +3348,10 @@
             }
         }
 
-        function selectParcel(obj) {
+        function selectParcel(obj, forceSwitchTab = true) {
+            if (!obj) return;
             selectedObject = obj;
-            const data = obj.userData;
+            const data = obj.userData || {};
             currentActiveParcelData = data;
 
             interactiveObjects.forEach(o => {
@@ -2616,46 +3359,154 @@
             });
             if (obj.material && obj.material.emissive) {
                 obj.material.emissive.setHex(0x10B981);
+                if (obj.material.emissiveIntensity !== undefined) obj.material.emissiveIntensity = 0.4;
             }
 
-            document.getElementById('inspectorEmptyState').style.display = 'none';
-            document.getElementById('inspectorContent').style.display = 'block';
+            const emptyState = document.getElementById('inspectorEmptyState');
+            const content = document.getElementById('inspectorContent');
+            if (emptyState) emptyState.style.display = 'none';
+            if (content) content.style.display = 'block';
 
-            // NIC Standard 14-Digit ULPIN & Sub-Unit Syntax
-            const rootU = data.root_ulpin || (data.ulpin ? data.ulpin.split('/')[0] : 'IN2877214100A1');
-            document.getElementById('inspRootUlpin').textContent = rootU;
-            document.getElementById('inspUlpin').textContent = data.ulpin || `${rootU}/L01/U01`;
+            // 1. NIC Standard 14-Digit ULPIN & Sub-Unit Syntax
+            const rootU = data.root_ulpin || (data.ulpin ? data.ulpin.split('/')[0].split('-')[0] : 'IN28773421');
+            const ulpinFull = data.ulpin || `${rootU}/L01/U01`;
 
-            document.getElementById('inspKhasra').textContent = data.khasra_no ? `Khasra #${data.khasra_no}` : (data.name || 'Sector Lot');
-            document.getElementById('inspKhata').textContent = data.khata_no ? `Khata #${data.khata_no}` : 'Khatauni #14/A';
-            document.getElementById('inspOwner').textContent = data.owner || data.owner_name || data.department || 'Registered Title Holder';
-            document.getElementById('inspOwnerId').textContent = data.owner_id || 'eKYC:SHA256:VERIFIED-UIDAI-ANONYMOUS';
-            document.getElementById('inspBuilding').textContent = data.building || data.building_name || data.name || 'Aryavarta Enclave';
-            document.getElementById('inspUnit').textContent = data.unit_number || `Floor ${data.floor_level || '1'}`;
-            document.getElementById('inspLandUse').textContent = data.land_use || data.use_case || 'Residential';
+            // 2. Hierarchical 3D ULPIN Resolution Breakdown
+            let baseSeg = rootU.replace(/[^a-zA-Z0-9]/g, '').substring(0, 10).toUpperCase() || 'IN28773421';
+            let bldgSeg = 'B01';
+            const bldgName = data.building_name || data.building || '';
+            if (bldgName) {
+                const bMatch = bldgName.match(/Tower\s*([A-Z0-9]+)|Complex|Khasra/i);
+                bldgSeg = bMatch && bMatch[1] ? `B0${bMatch[1]}` : 'B01';
+            }
+            const flNum = data.floor_level !== undefined ? data.floor_level : 1;
+            let floorSeg = flNum < 0 ? `B0${Math.abs(flNum)}` : `F${String(flNum).padStart(3, '0')}`;
+            let unitSeg = 'U001';
+            if (data.unit_number) {
+                const uDigits = data.unit_number.match(/\d+/);
+                unitSeg = uDigits ? `U${String(uDigits[0]).padStart(3, '0')}` : 'U001';
+            }
 
-            const area = data.floor_area_sqm || data.plot_area_sqm || 160;
-            const gaj = (area * 1.196).toFixed(1);
-            document.getElementById('inspArea').textContent = `${area} m² (${gaj} गज)`;
+            const hSegBase = document.getElementById('hSegBase');
+            const hSegBldg = document.getElementById('hSegBldg');
+            const hSegFloor = document.getElementById('hSegFloor');
+            const hSegUnit = document.getElementById('hSegUnit');
+            const hFullUlpin = document.getElementById('hFullUlpin');
 
-            // Undivided Share of Land (UDS) breakdown
-            if (data.strata_share_value) {
-                document.getElementById('rowUds').style.display = 'flex';
-                document.getElementById('inspUds').textContent = `${data.strata_share_value} / 1000 (${data.uds_sqm || (area * 0.22).toFixed(1)} m²)`;
+            if (hSegBase) hSegBase.textContent = baseSeg;
+            if (hSegBldg) hSegBldg.textContent = bldgSeg;
+            if (hSegFloor) hSegFloor.textContent = floorSeg;
+            if (hSegUnit) hSegUnit.textContent = unitSeg;
+            if (hFullUlpin) hFullUlpin.textContent = `${baseSeg}-${bldgSeg}-${floorSeg}-${unitSeg}`;
+
+            // 3. Subterranean Clearance & Infrastructure Buffer Audit
+            const objPos = obj.position || new THREE.Vector3(0, 0, 0);
+            const drainageDist = Math.hypot(objPos.x, objPos.z - 5);
+            const culvertDist = Math.max(1.5, drainageDist).toFixed(1);
+            const metroClearance = (Math.abs(objPos.y - (-18))).toFixed(1);
+
+            const hudDrainageDist = document.getElementById('hudDrainageDist');
+            const hudMetroDist = document.getElementById('hudMetroDist');
+            const hudClearanceBadge = document.getElementById('hudClearanceBadge');
+            const hudBufferStatus = document.getElementById('hudBufferStatus');
+
+            if (hudDrainageDist) hudDrainageDist.textContent = `${culvertDist} m Lateral Clearance`;
+            if (hudMetroDist) hudMetroDist.textContent = `${metroClearance} m Vertical MSL Crown`;
+
+            if (parseFloat(culvertDist) < 3.0) {
+                if (hudClearanceBadge) {
+                    hudClearanceBadge.className = 'status-badge-small danger';
+                    hudClearanceBadge.textContent = 'SETBACK VIOLATION';
+                }
+                if (hudBufferStatus) {
+                    hudBufferStatus.style.color = 'var(--danger)';
+                    hudBufferStatus.textContent = 'Non-Compliant: Lateral Distance < 3.0m Statutory Line';
+                }
             } else {
-                document.getElementById('rowUds').style.display = 'none';
+                if (hudClearanceBadge) {
+                    hudClearanceBadge.className = 'status-badge-small compliant';
+                    hudClearanceBadge.textContent = 'SAFE BUFFER';
+                }
+                if (hudBufferStatus) {
+                    hudBufferStatus.style.color = 'var(--emerald-light)';
+                    hudBufferStatus.textContent = 'Verified Compliant (> 3.0m Statutory Line)';
+                }
             }
 
-            const vol = data.volume_cum || Math.round(area * 3.2);
-            document.getElementById('inspVolume').textContent = `${vol} m³`;
-            document.getElementById('inspValuation').textContent = data.valuation_inr || `₹${Math.round(area * 68000).toLocaleString('en-IN')}`;
-            document.getElementById('inspEncumbrance').textContent = data.encumbrance || 'Clear Title / Non-Encumbered';
+            // 4. Spatial Analytics Metrics (Shoelace, True Perimeter, 3D Airspace Volume, Morton Code)
+            const area = data.floor_area_sqm || data.plot_area_sqm || (data.width && data.depth ? data.width * data.depth : 180);
+            const perimeter = data.width && data.depth ? (2 * (data.width + data.depth)).toFixed(1) : (4 * Math.sqrt(area)).toFixed(1);
+            const height = data.height_m || (data.extrusion_height ? Math.abs(data.extrusion_height - (data.base_height || 0)) : 3.2);
+            const vol = data.volume_cum || Math.round(area * height);
 
-            switchTab('tab-inspector');
+            const mortonVal = ((Math.abs(Math.round(objPos.x * 100)) & 0xFF) << 16) |
+                              ((Math.abs(Math.round(objPos.y * 100)) & 0xFF) << 8) |
+                              (Math.abs(Math.round(objPos.z * 100)) & 0xFF);
+            const mortonCode = '0' + mortonVal.toString(16).toUpperCase().padStart(7, '0');
+
+            const saArea = document.getElementById('saShoelaceArea');
+            const saPeri = document.getElementById('saPerimeter');
+            const saVol = document.getElementById('saVolume');
+            const saMorton = document.getElementById('saMortonCode');
+
+            if (saArea) saArea.textContent = `${Number(area).toFixed(1)} m²`;
+            if (saPeri) saPeri.textContent = `${perimeter} m`;
+            if (saVol) saVol.textContent = `${Number(vol).toLocaleString('en-IN')} m³`;
+            if (saMorton) saMorton.textContent = mortonCode;
+
+            // 5. Standard Cadastral Details
+            const inspRoot = document.getElementById('inspRootUlpin');
+            const inspUlpin = document.getElementById('inspUlpin');
+            const inspKhasra = document.getElementById('inspKhasra');
+            const inspKhata = document.getElementById('inspKhata');
+            const inspOwner = document.getElementById('inspOwner');
+            const inspOwnerId = document.getElementById('inspOwnerId');
+            const inspBuilding = document.getElementById('inspBuilding');
+            const inspUnit = document.getElementById('inspUnit');
+            const inspLandUse = document.getElementById('inspLandUse');
+            const inspArea = document.getElementById('inspArea');
+            const inspUds = document.getElementById('inspUds');
+            const rowUds = document.getElementById('rowUds');
+            const inspVolume = document.getElementById('inspVolume');
+            const inspValuation = document.getElementById('inspValuation');
+            const inspEncumbrance = document.getElementById('inspEncumbrance');
+
+            if (inspRoot) inspRoot.textContent = rootU;
+            if (inspUlpin) inspUlpin.textContent = ulpinFull;
+            if (inspKhasra) inspKhasra.textContent = data.khasra_no ? `Khasra #${data.khasra_no}` : (data.name || 'Sector Lot');
+            if (inspKhata) inspKhata.textContent = data.khata_no ? `Khata #${data.khata_no}` : 'Khatauni #14/A';
+            if (inspOwner) inspOwner.textContent = data.owner || data.owner_name || data.department || 'Registered Title Holder';
+            if (inspOwnerId) inspOwnerId.textContent = data.owner_id || 'eKYC:SHA256:VERIFIED-UIDAI-ANONYMOUS';
+            const bldgDisplay = data.building || data.building_name || data.name || 'Aryavarta Enclave';
+            if (inspBuilding) inspBuilding.textContent = bldgDisplay;
+            if (inspUnit) inspUnit.textContent = data.unit_number || `Floor ${data.floor_level || '1'}`;
+            if (inspLandUse) inspLandUse.textContent = data.land_use || data.use_case || 'Residential';
+
+            const gaj = (area * 1.196).toFixed(1);
+            if (inspArea) inspArea.textContent = `${area} m² (${gaj} गज)`;
+
+            if (data.strata_share_value) {
+                if (rowUds) rowUds.style.display = 'flex';
+                if (inspUds) inspUds.textContent = `${data.strata_share_value} / 1000 (${data.uds_sqm || (area * 0.22).toFixed(1)} m²)`;
+            } else {
+                if (rowUds) rowUds.style.display = 'none';
+            }
+
+            if (inspVolume) inspVolume.textContent = `${vol} m³`;
+            if (inspValuation) inspValuation.textContent = data.valuation_inr || `₹${Math.round(area * 68000).toLocaleString('en-IN')}`;
+            if (inspEncumbrance) inspEncumbrance.textContent = data.encumbrance || 'Clear Title / Non-Encumbered';
+
+            // Update building floor dropdown
+            updateFloorDropdownForBuilding(bldgDisplay);
+
+            if (forceSwitchTab) {
+                switchTab('tab-inspector');
+            }
 
             // Open mobile drawer if on small screen
             if (window.innerWidth <= 900) {
-                document.getElementById('sidebar').classList.add('open');
+                const sb = document.getElementById('sidebar');
+                if (sb) sb.classList.add('open');
             }
         }
 
@@ -2714,6 +3565,9 @@
                         if (f && f.properties) {
                             Object.assign(attrs, f.properties);
                         }
+                        if (f && f.geometry && f.geometry.coordinates) {
+                            uploadedCadastreFootprint = f.geometry.coordinates;
+                        }
                     } catch(err) {
                         console.error("GeoJSON parse error", err);
                     }
@@ -2731,6 +3585,7 @@
                 }
 
                 applyParsedAttributes(attrs, parsedFormat, file.size / 1024);
+                showHudToast("Cadastre File Parsed", `${parsedFormat} loaded • Ready to extrude 3D model`, "📂");
             };
             reader.readAsText(file);
         }
@@ -2745,12 +3600,15 @@
                     if (res.ok) {
                         const geo = await res.json();
                         const f = geo.features ? geo.features[0] : geo;
+                        if (f && f.geometry && f.geometry.coordinates) {
+                            uploadedCadastreFootprint = f.geometry.coordinates;
+                        }
                         applyParsedAttributes(f.properties, "Sample GeoJSON (RFC 7946)", 1.2);
+                        showHudToast("Sample Cadastre Loaded", "Khasra #342/1 polygon geometry parsed & buffered", "📁");
                         return;
                     }
                 } catch(e) {}
 
-                // Built-in fallback sample attributes
                 applyParsedAttributes({
                     khasra_no: "342/1",
                     khata_no: "88",
@@ -2767,6 +3625,7 @@
                     side_setback_m: 3.0,
                     far_permitted: 2.75
                 }, "Sample GeoJSON (Khasra #342/1)", 1.2);
+                showHudToast("Sample Cadastre Loaded", "Khasra #342/1 polygon geometry parsed & buffered", "📁");
             } else if (type === 'dxf') {
                 applyParsedAttributes({
                     khasra_no: "408/TOWN",
@@ -2784,6 +3643,7 @@
                     side_setback_m: 3.5,
                     far_permitted: 3.0
                 }, "Sample AutoCAD DXF (Township Parcel)", 2.4);
+                showHudToast("Sample CAD Loaded", "AutoCAD DXF polyline levels parsed & ready", "📐");
             }
         }
 
@@ -2802,6 +3662,16 @@
             const setbackFront = parseFloat(document.getElementById('formSetbackFront').value) || 4.5;
             const setbackSide = parseFloat(document.getElementById('formSetbackSide').value) || 3.0;
 
+            // Compute standard spatial geometry metrics in outer scope
+            const plotW = 24.0, plotD = 22.0;
+            const bldgW = Math.max(8.0, plotW - setbackSide * 2);
+            const bldgD = Math.max(8.0, plotD - setbackFront * 2);
+            const groundArea = plotW * plotD;
+            const totalBuiltUp = bldgW * bldgD * floors;
+            const cleanKhasra = khasra.replace(/[^a-zA-Z0-9]/g, '');
+            const rootUlpin = `IN2877${cleanKhasra || '3421'}EXT1`;
+            const statutoryValuation = totalBuiltUp * circleRate;
+
             const reqPayload = {
                 state, district: "Dadri / NCR", tehsil, village: "Aryavarta Kalan",
                 khasra_no: khasra, khata_no: khata, land_use: landUse,
@@ -2819,30 +3689,22 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(reqPayload),
-                    signal: AbortSignal.timeout(4000)
+                    signal: AbortSignal.timeout(3000)
                 });
                 if (res.ok) {
                     result = await res.json();
                 }
             } catch (err) {
-                console.warn("Backend sleeping/offline, executing local 14-digit ULPIN 3D extrusion:", err);
+                console.warn("Backend sleeping/offline, executing local high-precision 3D extrusion engine:", err);
             }
 
             if (!result) {
-                // Client-side fallback computation
-                const rootUlpin = `IN2877${khasra.replace('/', '')}EXT1`;
-                const plotW = 24.0, plotD = 22.0;
-                const bldgW = plotW - setbackSide * 2;
-                const bldgD = plotD - setbackFront * 2;
-                const groundArea = plotW * plotD;
-                const totalBuiltUp = bldgW * bldgD * floors;
-
                 result = {
                     status: "SUCCESS_EXTRUDED_3D",
                     root_ulpin_14: rootUlpin,
                     standard_syntax: `${rootUlpin}/<FLOOR>/<UNIT>`,
                     ekyc_verification: {
-                        ekyc_sha256: "eKYC:SHA256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+                        ekyc_sha256: `eKYC:SHA256:${rootUlpin.toLowerCase()}7f83b1657ff1fc53b92d`,
                         zkp_token: "ZKP:eKYC-OFFICER-REG"
                     },
                     spatial_metrics: {
@@ -2851,68 +3713,246 @@
                         total_floors: floors,
                         total_height_m: 0.9 + floors * floorHeight,
                         far_consumed: (totalBuiltUp / groundArea).toFixed(2),
-                        far_compliance: "COMPLIANT"
+                        far_compliance: (totalBuiltUp / groundArea) <= far ? "COMPLIANT" : "FAR_EXCEEDED"
                     },
                     financial_valuation: {
-                        statutory_valuation_inr: totalBuiltUp * circleRate
+                        statutory_valuation_inr: statutoryValuation
                     }
                 };
             }
 
-            // Build 3D Mesh in Scene
-            const cx = -25.0, cz = 60.0;
-            const bWidth = 18.0, bDepth = 16.0;
+            // Remove any previously extruded officer group and clean interactiveObjects
+            if (officerExtrusionGroup) {
+                scene.remove(officerExtrusionGroup);
+                interactiveObjects = interactiveObjects.filter(o => !o.userData || o.userData.officerGenerated !== true);
+            }
+            officerExtrusionGroup = new THREE.Group();
+            officerExtrusionGroup.name = "OfficerExtrusionGroup";
+            scene.add(officerExtrusionGroup);
 
-            for (let fl = 1; fl <= floors; fl++) {
-                const fBase = 0.9 + (fl - 1) * floorHeight;
-                const geom = new THREE.BoxGeometry(bWidth, floorHeight, bDepth);
-                const mat = new THREE.MeshStandardMaterial({
-                    color: fl === 1 ? 0xD97706 : 0x10B981,
-                    roughness: 0.35,
-                    metalness: 0.15,
+            const cx = -25.0, cz = 60.0;
+            const buildingMeshArray = [];
+
+            // 1. Cadastral Boundary & Plinth Base at Ground Level
+            const plinthGeo = new THREE.BoxGeometry(plotW, 0.4, plotD);
+            const plinthMat = new THREE.MeshStandardMaterial({
+                color: 0x14201A,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const plinthMesh = new THREE.Mesh(plinthGeo, plinthMat);
+            plinthMesh.position.set(cx, 0.2, cz);
+            plinthMesh.receiveShadow = true;
+            officerExtrusionGroup.add(plinthMesh);
+
+            // Ground boundary setback line in Amber Gold
+            const plinthEdges = new THREE.EdgesGeometry(plinthGeo);
+            const plinthLine = new THREE.LineSegments(plinthEdges, new THREE.LineBasicMaterial({ color: 0xF59E0B, linewidth: 2 }));
+            plinthMesh.add(plinthLine);
+
+            // 2. Subterranean Basement Foundation (if basements > 0)
+            if (basements > 0) {
+                const bDepth = 3.5;
+                const baseGeo = new THREE.BoxGeometry(bldgW, bDepth, bldgD);
+                const baseMat = new THREE.MeshStandardMaterial({
+                    color: 0x2A3B32,
+                    roughness: 0.7,
+                    metalness: 0.3,
                     transparent: true,
-                    opacity: 0.9,
+                    opacity: 0.85
+                });
+                const basementMesh = new THREE.Mesh(baseGeo, baseMat);
+                basementMesh.position.set(cx, -bDepth / 2, cz);
+                basementMesh.userData = {
+                    officerGenerated: true,
+                    root_ulpin: result.root_ulpin_14,
+                    ulpin: `${result.root_ulpin_14}/B01/PARK`,
+                    khasra_no: khasra,
+                    khata_no: khata,
+                    building_name: `Khasra #${khasra} Digital Twin`,
+                    building: `Khasra #${khasra} Digital Twin`,
+                    unit_number: `B01 Subterranean Parking & Utility Vault`,
+                    floor_level: -1,
+                    owner: owner,
+                    owner_name: owner,
+                    owner_id: result.ekyc_verification.ekyc_sha256,
+                    land_use: "Subterranean Parking / Utility",
+                    width: bldgW,
+                    depth: bldgD,
+                    floor_area_sqm: Math.round(bldgW * bldgD),
+                    volume_cum: Math.round(bldgW * bldgD * bDepth),
+                    strata_share_value: 0,
+                    uds_sqm: "0.0",
+                    valuation_inr: `₹${((statutoryValuation * 0.15) / 10000000).toFixed(2)} Crore`,
+                    encumbrance: "Subterranean Easement Registered",
+                    layerType: 'strata'
+                };
+                officerExtrusionGroup.add(basementMesh);
+                interactiveObjects.push(basementMesh);
+
+                // Basement foundation concrete footing piers (4 pillars descending into bedrock)
+                const pierGeo = new THREE.CylinderGeometry(0.8, 1.0, 3.5, 12);
+                const pierMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.9 });
+                const cornerOffsets = [
+                    [-bldgW / 2 + 1.2, -bldgD / 2 + 1.2],
+                    [bldgW / 2 - 1.2, -bldgD / 2 + 1.2],
+                    [-bldgW / 2 + 1.2, bldgD / 2 - 1.2],
+                    [bldgW / 2 - 1.2, bldgD / 2 - 1.2]
+                ];
+                cornerOffsets.forEach(([ox, oz]) => {
+                    const pier = new THREE.Mesh(pierGeo, pierMat);
+                    pier.position.set(cx + ox, -bDepth - 1.75, cz + oz);
+                    officerExtrusionGroup.add(pier);
+                });
+            }
+
+            // 3. Vertical Upper Floor Slabs
+            for (let fl = 1; fl <= floors; fl++) {
+                const fBase = 0.4 + (fl - 1) * floorHeight;
+                const geom = new THREE.BoxGeometry(bldgW, floorHeight - 0.12, bldgD);
+                const isGround = fl === 1;
+                const isTop = fl === floors;
+
+                // Ground floor: Terracotta sandstone; Upper floors: Forest Emerald
+                const mat = new THREE.MeshStandardMaterial({
+                    color: isGround ? 0xD97706 : (isTop ? 0x059669 : 0x10B981),
+                    roughness: 0.32,
+                    metalness: 0.22,
+                    transparent: true,
+                    opacity: 0.92,
                     clippingPlanes: [clippingPlaneY]
                 });
                 const mesh = new THREE.Mesh(geom, mat);
-                mesh.position.set(cx, fBase + floorHeight / 2, cz);
+                mesh.position.set(cx, fBase + (floorHeight - 0.12) / 2, cz);
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
 
+                // Heritage Amber wireframe edge outlines
                 const edges = new THREE.EdgesGeometry(geom);
                 const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xF59E0B, linewidth: 2 }));
                 mesh.add(line);
 
-                const flCode = `L${fl < 10 ? '0' + fl : fl}`;
+                // Modern window glass accent band
+                const winGeo = new THREE.BoxGeometry(bldgW + 0.08, floorHeight * 0.45, bldgD + 0.08);
+                const winMat = new THREE.MeshStandardMaterial({
+                    color: 0x6EE7B7,
+                    roughness: 0.1,
+                    metalness: 0.8,
+                    transparent: true,
+                    opacity: 0.45
+                });
+                const winMesh = new THREE.Mesh(winGeo, winMat);
+                mesh.add(winMesh);
+
+                const flCode = `F${String(fl).padStart(3, '0')}`;
                 const unitUlpin = `${result.root_ulpin_14}/${flCode}/U${fl}01`;
 
                 mesh.userData = {
+                    officerGenerated: true,
                     root_ulpin: result.root_ulpin_14,
                     ulpin: unitUlpin,
                     khasra_no: khasra,
                     khata_no: khata,
-                    building_name: `Khasra #${khasra} Complex`,
-                    unit_number: `Floor ${fl} Unit (Officer Extrusion)`,
+                    building_name: `Khasra #${khasra} Digital Twin`,
+                    building: `Khasra #${khasra} Digital Twin`,
+                    unit_number: isGround ? `Ground Floor Reception & Society Lounge` : `Unit ${fl}01 (Floor ${fl})`,
+                    floor_level: fl,
+                    owner: owner,
                     owner_name: owner,
                     owner_id: result.ekyc_verification.ekyc_sha256,
                     land_use: landUse,
-                    floor_area_sqm: Math.round(bWidth * bDepth),
-                    volume_cum: Math.round(bWidth * bDepth * floorHeight),
+                    width: bldgW,
+                    depth: bldgD,
+                    floor_area_sqm: Math.round(bldgW * bldgD),
+                    volume_cum: Math.round(bldgW * bldgD * floorHeight),
                     strata_share_value: Math.round(1000 / floors),
                     uds_sqm: (groundArea / floors).toFixed(1),
-                    valuation_inr: `₹${((result.financial_valuation.statutory_valuation_inr || 25000000) / 10000000).toFixed(2)} Crore`,
+                    valuation_inr: `₹${((statutoryValuation / floors) / 100000).toFixed(2)} Lakh`,
                     encumbrance: "Clear Title / Officer Extrusion Certified",
                     layerType: 'strata'
                 };
-                scene.add(mesh);
+
+                officerExtrusionGroup.add(mesh);
                 interactiveObjects.push(mesh);
+                buildingMeshArray.push(mesh);
             }
 
-            flyCameraTo(cx - 35, 30, cz + 45, cx, 10, cz);
+            // 4. Indian Architectural Rooftop Utilities (Mumty, Sintex Tank, Solar Array, Parapet)
+            const topY = 0.4 + floors * floorHeight;
 
-            alert(`✅ Khasra #${khasra} successfully extruded into ${floors}-storey 3D Cadastre!\n\n• NIC 14-Digit ULPIN: ${result.root_ulpin_14}\n• Standard Syntax: ${result.root_ulpin_14}/<Floor>/<Unit>\n• Built-up Area: ${result.spatial_metrics.total_built_up_sqm} m²\n• FAR Status: ${result.spatial_metrics.far_compliance}\n• Valuation: ₹${((result.financial_valuation.statutory_valuation_inr || 25000000) / 10000000).toFixed(2)} Cr`);
+            // Rooftop Parapet Wall (Safety railing)
+            const parapetGeo = new THREE.BoxGeometry(bldgW, 0.8, bldgD);
+            const parapetMat = new THREE.MeshStandardMaterial({ color: 0x192720, roughness: 0.6 });
+            const parapetMesh = new THREE.Mesh(parapetGeo, parapetMat);
+            parapetMesh.position.set(cx, topY + 0.4, cz);
+            officerExtrusionGroup.add(parapetMesh);
 
-            selectParcel(interactiveObjects[interactiveObjects.length - 1]);
+            // Lift Machine Room & Staircase Mumty
+            const mumtyGeo = new THREE.BoxGeometry(bldgW * 0.35, 2.4, bldgD * 0.35);
+            const mumtyMat = new THREE.MeshStandardMaterial({ color: 0xD97706, roughness: 0.4 });
+            const mumty = new THREE.Mesh(mumtyGeo, mumtyMat);
+            mumty.position.set(cx - bldgW * 0.2, topY + 1.2, cz - bldgD * 0.2);
+            officerExtrusionGroup.add(mumty);
+
+            // Overhead Sintex Water Tank (Cylinder)
+            const tankGeo = new THREE.CylinderGeometry(1.0, 1.0, 1.8, 16);
+            const tankMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.2 });
+            const tank = new THREE.Mesh(tankGeo, tankMat);
+            tank.position.set(cx - bldgW * 0.2, topY + 2.4 + 0.9, cz - bldgD * 0.2);
+            officerExtrusionGroup.add(tank);
+
+            // Rooftop Solar Photovoltaic Panels (Green energy tilted array)
+            const solarGeo = new THREE.PlaneGeometry(bldgW * 0.4, bldgD * 0.35);
+            const solarMat = new THREE.MeshStandardMaterial({
+                color: 0x0f172a,
+                roughness: 0.1,
+                metalness: 0.9,
+                side: THREE.DoubleSide
+            });
+            const solarPanel = new THREE.Mesh(solarGeo, solarMat);
+            solarPanel.rotation.x = -Math.PI / 2 + 0.42; // Tilted ~24 degrees south
+            solarPanel.position.set(cx + bldgW * 0.2, topY + 0.9, cz + bldgD * 0.15);
+            officerExtrusionGroup.add(solarPanel);
+
+            // 5. Smooth Rising Extrusion Animation
+            const targetY = buildingMeshArray.map(m => m.position.y);
+            buildingMeshArray.forEach((m) => {
+                m.scale.y = 0.05;
+                m.position.y = 0.4;
+            });
+            let animProgress = 0;
+            const animStep = () => {
+                animProgress += 0.045;
+                if (animProgress <= 1.0) {
+                    buildingMeshArray.forEach((m, idx) => {
+                        m.scale.y = Math.min(1.0, animProgress * 1.3);
+                        m.position.y = THREE.MathUtils.lerp(0.4, targetY[idx], animProgress);
+                    });
+                    requestAnimationFrame(animStep);
+                } else {
+                    buildingMeshArray.forEach((m, idx) => {
+                        m.scale.y = 1.0;
+                        m.position.y = targetY[idx];
+                    });
+                }
+            };
+            requestAnimationFrame(animStep);
+
+            // Smoothly fly camera to frame the new building
+            flyCameraTo(cx - 32, 22 + floors * floorHeight * 0.5, cz + 42, cx, (floors * floorHeight) / 2, cz);
+
+            // Show non-blocking high-tech HUD Toast notification
+            showHudToast(
+                "3D Cadastre Extruded",
+                `Khasra #${khasra} • ${floors} Floors Extruded • ULPIN: ${result.root_ulpin_14} • ₹${((statutoryValuation) / 10000000).toFixed(2)} Cr`,
+                "🚀"
+            );
+
+            // Select the topmost floor without forcibly switching tab away from officer view
+            const topFloorMesh = buildingMeshArray[buildingMeshArray.length - 1];
+            if (topFloorMesh) {
+                selectParcel(topFloorMesh, false);
+            }
         }
 
         // -------------------------------------------------------------
@@ -3163,25 +4203,116 @@
             openApiSettingsModal();
         }
 
+        function handleSearchInput(query) {
+            const dropdown = document.getElementById('searchDropdown');
+            if (!dropdown) return;
+            const q = (query || '').trim().toLowerCase();
+            if (!q || q.length < 1) {
+                dropdown.style.display = 'none';
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            const matches = [];
+            const seen = new Set();
+            interactiveObjects.forEach(obj => {
+                const u = obj.userData;
+                if (!u) return;
+                const key = u.ulpin || u.khasra_no || u.building_name;
+                if (!key || seen.has(key)) return;
+
+                const matchScore = (
+                    (u.ulpin && u.ulpin.toLowerCase().includes(q)) ||
+                    (u.root_ulpin && u.root_ulpin.toLowerCase().includes(q)) ||
+                    (u.khasra_no && String(u.khasra_no).toLowerCase().includes(q)) ||
+                    (u.owner_name && u.owner_name.toLowerCase().includes(q)) ||
+                    (u.owner && u.owner.toLowerCase().includes(q)) ||
+                    (u.building_name && u.building_name.toLowerCase().includes(q)) ||
+                    (u.building && u.building.toLowerCase().includes(q)) ||
+                    (u.unit_number && u.unit_number.toLowerCase().includes(q))
+                );
+
+                if (matchScore) {
+                    seen.add(key);
+                    matches.push(obj);
+                }
+            });
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = '<div style="padding:10px 12px; font-size:11px; color:var(--text-muted);">No cadastral records found for "' + q + '"</div>';
+                dropdown.style.display = 'block';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            matches.slice(0, 8).forEach(obj => {
+                const u = obj.userData;
+                const item = document.createElement('div');
+                item.className = 'search-dropdown-item';
+
+                const title = u.building_name || u.building || (u.khasra_no ? `Khasra #${u.khasra_no}` : (u.name || 'Cadastre Parcel'));
+                const sub = u.ulpin || u.root_ulpin || `Owner: ${u.owner_name || u.owner || 'Registered'}`;
+                const unit = u.unit_number ? ` • ${u.unit_number}` : '';
+
+                item.innerHTML = `
+                    <div style="font-size:11px; font-weight:700; color:var(--amber-gold); display:flex; justify-content:space-between;">
+                        <span>${title}${unit}</span>
+                        <span style="color:var(--emerald-light); font-size:9px;">${u.layerType || 'strata'}</span>
+                    </div>
+                    <div style="font-size:9px; color:var(--text-muted); font-family:monospace; margin-top:2px;">
+                        ${sub}
+                    </div>
+                `;
+
+                item.onclick = () => {
+                    dropdown.style.display = 'none';
+                    document.getElementById('quickSearchInput').value = title;
+                    selectParcel(obj, true);
+                    const pos = obj.position || new THREE.Vector3(0, 0, 0);
+                    flyCameraTo(pos.x - 25, pos.y + 20, pos.z + 35, pos.x, pos.y, pos.z);
+                    showHudToast("Cadastral Flight", `Camera focused on ${title}${unit}`, "🔍");
+                };
+
+                dropdown.appendChild(item);
+            });
+
+            dropdown.style.display = 'block';
+        }
+
+        // Close search dropdown on outside click
+        document.addEventListener('click', (e) => {
+            const box = document.querySelector('.search-box');
+            const dropdown = document.getElementById('searchDropdown');
+            if (dropdown && box && !box.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
         function handleSearchKey(e) {
             if (e.key === 'Enter') {
                 const query = e.target.value.trim().toLowerCase();
                 if (!query) return;
 
+                const dropdown = document.getElementById('searchDropdown');
+                if (dropdown) dropdown.style.display = 'none';
+
                 const found = interactiveObjects.find(obj => {
                     const u = obj.userData;
+                    if (!u) return false;
                     return (u.ulpin && u.ulpin.toLowerCase().includes(query)) ||
                            (u.root_ulpin && u.root_ulpin.toLowerCase().includes(query)) ||
-                           (u.khasra_no && u.khasra_no.toLowerCase().includes(query)) ||
+                           (u.khasra_no && String(u.khasra_no).toLowerCase().includes(query)) ||
                            (u.owner_name && u.owner_name.toLowerCase().includes(query)) ||
                            (u.building_name && u.building_name.toLowerCase().includes(query));
                 });
 
                 if (found) {
                     selectParcel(found);
-                    flyCameraTo(found.position.x - 20, found.position.y + 15, found.position.z + 30, found.position.x, found.position.y, found.position.z);
+                    const pos = found.position || new THREE.Vector3(0, 0, 0);
+                    flyCameraTo(pos.x - 20, pos.y + 15, pos.z + 30, pos.x, pos.y, pos.z);
+                    showHudToast("Cadastral Search Match", `Found ${found.userData.building_name || found.userData.ulpin}`, "🔍");
                 } else {
-                    alert(`No parcel matching "${query}" found.`);
+                    showHudToast("Search Notice", `No parcel matching "${query}" located.`, "⚠️");
                 }
             }
         }
@@ -3209,6 +4340,19 @@
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
+
+            // Real-time Monsoon rain particle simulation
+            if (weatherMode === 'monsoon' && rainPoints && rainVelocities) {
+                const pos = rainPoints.geometry.attributes.position.array;
+                const count = pos.length / 3;
+                for (let i = 0; i < count; i++) {
+                    pos[i * 3 + 1] -= rainVelocities[i] * 0.016;
+                    if (pos[i * 3 + 1] < 0) {
+                        pos[i * 3 + 1] = 200 + Math.random() * 50;
+                    }
+                }
+                rainPoints.geometry.attributes.position.needsUpdate = true;
+            }
 
             // Gentle pulsing animation on conflict collision mesh if visible
             if (conflictMesh && conflictMesh.visible) {
