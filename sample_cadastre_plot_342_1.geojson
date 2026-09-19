@@ -1,0 +1,48 @@
+{
+  "type": "FeatureCollection",
+  "name": "Khasra_342_1_Cadastral_Boundary",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "khasra_no": "342/1",
+        "khata_no": "88",
+        "village": "Aryavarta Kalan",
+        "tehsil": "Dadri",
+        "district": "Gautam Buddha Nagar",
+        "state": "Uttar Pradesh",
+        "owner_name": "Shri Rameshwar Dayal & Smt. Radha Devi",
+        "land_use": "Residential Colony",
+        "circle_rate_inr": 55000,
+        "levels": 5,
+        "floor_height": 3.2,
+        "base_height": 0.9,
+        "basement_levels": 1,
+        "basement_depth": 3.5,
+        "front_setback_m": 4.5,
+        "side_setback_m": 3.0,
+        "rear_setback_m": 3.0,
+        "far_permitted": 2.75,
+        "survey_standard": "Survey of India / NIC DILRMP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.240750, 28.536000],
+            [77.240995, 28.536000],
+            [77.240995, 28.535802],
+            [77.240750, 28.535802],
+            [77.240750, 28.536000]
+          ]
+        ]
+      }
+    }
+  ]
+}

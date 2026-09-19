@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Khasra_342_1_Cadastral_Parcel</name>
+    <description>Survey of India / NIC DILRMP Cadastral Boundary</description>
+    <Placemark>
+      <name>Khasra #342/1</name>
+      <ExtendedData>
+        <Data name="khasra_no"><value>342/1</value></Data>
+        <Data name="khata_no"><value>88</value></Data>
+        <Data name="levels"><value>5</value></Data>
+        <Data name="floor_height"><value>3.2</value></Data>
+        <Data name="owner_name"><value>Shri Rameshwar Dayal &amp; Smt. Radha Devi</value></Data>
+        <Data name="land_use"><value>Residential Colony</value></Data>
+      </ExtendedData>
+      <Polygon>
+        <extrude>1</extrude>
+        <altitudeMode>relativeToGround</altitudeMode>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              77.240750,28.536000,0
+              77.240995,28.536000,0
+              77.240995,28.535802,0
+              77.240750,28.535802,0
+              77.240750,28.536000,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
