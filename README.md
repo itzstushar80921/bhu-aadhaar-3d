@@ -1,144 +1,181 @@
-# भू-आधार 3D • National 3D Volumetric Cadastre & Colony Digital Twin Platform
+# Bhu-Aadhaar 3D (भू-आधार 3D)
 
-[![Vercel Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=flat&logo=vercel)](https://vercel.com)
-[![Render Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat&logo=render)](https://render.com)
-[![Standard](https://img.shields.io/badge/Standard-ISO%2019152%20LADM%203D-10B981)](#)
-[![Theme](https://img.shields.io/badge/Palette-Forest%20Emerald%20%26%20Heritage%20Gold-D97706)](#)
+A web-based 3D cadastral mapping and land administration platform tailored for Indian urban and peri-urban land records. The system converts traditional 2D land parcels (Khasra/Khatauni) into 3D volumetric spatial units compliant with ISO 19152 (LADM), calculates Undivided Share of Land (UDS) for multi-story apartments, detects vertical structural encroachments over public rights-of-way, and models underground utilities.
 
-A production-ready **3D Bhu-Aadhaar (ULPIN) Volumetric Cadastre and Colony Digital Twin Platform** built for the **Survey of India (SoI)** and **Department of Land Resources (DoLR), Ministry of Rural Development, Government of India**.
+Built with a FastAPI spatial backend and a lightweight Three.js/WebGL frontend that runs in standard browsers without desktop GIS software.
 
 ---
 
-## 🌟 Key Features
+## Background & Problem Statement
 
-1. **Strictly Zero Blue Palette**:
-   - Designed with an authoritative, elegant Indian Land Registry aesthetic: **Deep Slate Obsidian (`#080D0B`)**, **Indian Forest Emerald (`#10B981`)**, **Heritage Amber/Gold (`#F59E0B`, `#D97706`)**, and **Terracotta Sandstone (`#E07A5F`)**.
-   - Zero blue/navy tones for superior contrast, warmth, and ease of understanding.
+Most state land revenue systems in India (Bhulekh, Bhu-Naksha, Jharbhoomi) record properties purely on a 2D plane:
+- **Vertical Strata Gap**: In high-rise apartments, flat buyers hold registered deeds for "air space" without volumetric boundary coordinates ($X, Y, Z$). This opens room for illegal additional floors, floor plan deviations, and duplicate sales.
+- **Encroachment Blind Spots**: Upper-floor balcony extensions and cantilever structures frequently protrude into municipal road buffers without altering the 2D ground footprint, evading satellite and drone boundary detection.
+- **Subterranean Conflicts**: Urban development work routinely causes utility damage or tunnel strikes because underground water, gas, electricity, and metro corridors are not mapped relative to ground datum.
 
-2. **Interactive Hover Tooltips on Acronyms & Legal Terms**:
-   - Every abbreviation and technical land revenue term in Hindi/Urdu/English features an interactive dotted underline with an explanatory hover popup:
-     - **ULPIN** (Unique Land Parcel Identification Number / 14-digit Bhu-Aadhaar)
-     - **Khasra** (Cadastral survey plot document & shajra number)
-     - **Khatauni / Jamabandi** (Record of Rights / Title Register)
-     - **SVAMITVA Scheme** (Drone-based village inhabited area 3D mapping)
-     - **FAR / FSI** (Floor Area Ratio / Floor Space Index limits)
-     - **Setback** (Statutory open space buffers)
-     - **Nazul Land & Gaon Sabha Land** (Government & Community lands)
-     - **Mutation (Dakhil-Kharij)**, **Circle Rate**, **Encumbrance**, **LADM (ISO 19152)**, and more.
-   - Includes a searchable **Quick Glossary Dictionary Drawer**.
-
-3. **Colony Township View (Not a Single Building)**:
-   - Full 3D model of **Aryavarta Enclave - Sector 12**:
-     - **Road Corridors**: 24m Main Sector Arterial Road with centerlines, sidewalks, and 12m/9m internal colony avenues.
-     - **Government Properties** (Tagged with Ashoka Pillar badges):
-       - Gram Panchayat Bhawan & CSC Digital Seva Kendra (Khasra #GOVT/101)
-       - Govt Primary Health Centre (PHC) & Ayush Clinic (Khasra #GOVT/102)
-       - PM SHRI Govt Model Senior Secondary School (Khasra #GOVT/103)
-       - Community Park & Amrit Sarovar Water Body (Khasra #GOVT/104)
-       - Power Grid 33kV Substation (Khasra #GOVT/105)
-     - **Residential Strata Societies**: *Ganga Heights* (8 floors with clickable flats & penthouse) and *Yamuna Residency*.
-     - **Plotted Independent Houses (Kothis)**: Khasra #201 to #206 with boundary walls, garden setbacks, and verified owner records.
-     - **Commercial Complex**: *Vyapar Kendra Plaza* (retail shops, bank ATM, offices).
-     - **Subterranean Infrastructure**: Delhi Metro Pink Line underground transit tunnel (-18m) and underground utilities (Water, Sewer, 11kV Power, BharatNet Fiber) with **Underground X-Ray Mode**!
-
-4. **Officer 2D Upload & 3D Extrusion Portal**:
-   - Revenue officers can upload 2D cadastre files (`.geojson`, `.kml`, `.csv`) or enter coordinates.
-   - Specify State, Tehsil, Khasra No., Khata No., Land classification, Owner details, Floor count, Plinth height, Basement levels, and Setback rules.
-   - Click **"Process & Extrude to 3D Cadastre"**:
-     - Automatically generates 14-digit ULPIN from centroid.
-     - Checks FAR/FSI compliance.
-     - Extrudes into 3D volumetric model directly into the Colony View.
-     - Automatically animates the camera to fly to the newly constructed parcel!
-     - Generates an official printable **3D Cadastral Property Card / Bhu-Aadhaar Certificate** with QR verification code.
-
-5. **Resilient Dual-Mode Architecture (Zero Errors)**:
-   - Can run connected to a live PostgreSQL/PostGIS database, OR seamlessly fall back to the built-in high-performance in-memory Indian cadastral dataset without 500 errors.
+This project implements volumetric parcel subdivision, generates standard 14-digit ULPIN identifiers down to individual flats, and exposes an officer-facing ingestion tool for AutoCAD DXF, GeoJSON, and KML files.
 
 ---
 
-## 🚀 Deployment Guide
+## Key Capabilities
 
-### Option 1: Deploy Frontend on Vercel
-
-The frontend is ready for instant 1-click deployment on **Vercel** with the included `vercel.json`:
-
-1. Push this repository to GitHub / GitLab / Bitbucket.
-2. Go to [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New Project"**.
-3. Import your repository:
-   - **Framework Preset**: Other
-   - **Root Directory**: `./` (leave default)
-   - **Build Command**: None (leave empty)
-   - **Output Directory**: `./` (leave default)
-4. Click **Deploy**.
-5. Once deployed, open your Vercel URL (e.g. `https://your-project.vercel.app`).
-6. Click the **"⚙️ API Config"** button in the top navigation bar and enter your Render backend URL (or leave blank to use the built-in offline engine).
+- **Colony-Level Digital Twin**: Renders township layouts (roads, government plots with state emblem markings, plotted housing, strata societies, and subterranean utility tunnels).
+- **2D-to-3D Cadastre Extrusion**: Officers can upload parcel boundary files or input coordinates with setback and FAR rules to generate 3D solids.
+- **Strata & UDS Calculation**: Splits apartment envelopes into floor units and computes statutory Undivided Share of Land (UDS) based on carpet area.
+- **Encroachment Collision Flagging**: Uses Separating Axis Theorem (SAT) bounding checks against municipal road Right-of-Way (RoW) buffers (demonstrated on Khasra #202).
+- **Interactive Section Slicer**: Real-time vertical clipping plane to inspect interior floor plans, structural shafts, and underground layers.
+- **Statutory 3D Property Card**: Generates printable verification certificates with dynamic QR codes and SHA-256 masked identity tokens.
+- **Contextual Tooltips & Multilingual Support**: Hover definitions for Indian revenue terms (*Khasra*, *Jamabandi*, *Nazul*, *FAR*, *ULPIN*) and UI localization into Hindi, Marathi, Gujarati, Kannada, Tamil, and English.
+- **High-Contrast Dark Theme**: Styled with a dark slate/emerald/amber palette (`#080D0B`, `#10B981`, `#F59E0B`) avoiding blue tones to ensure visual contrast on municipal projection displays.
 
 ---
 
-### Option 2: Deploy Backend on Render
+## Technical Architecture
 
-The backend is built with FastAPI and includes both a `render.yaml` blueprint and a `Dockerfile`.
+```
+Client (Browser)
+├── WebGL / Three.js r128 (Scene Graph, Local Clipping Planes, Raycasting)
+├── Vanilla ES6+ UI Components & Canvas 2D
+└── Client-side DXF / GeoJSON Parser & QR Generator
 
-#### Method A: Using Render Blueprint (Recommended)
-1. In your [Render Dashboard](https://dashboard.render.com), click **"New +"** -> **"Blueprint"**.
-2. Connect your GitHub repository.
-3. Render will automatically detect `render.yaml` and create the `bhu-aadhaar-3d-backend` Web Service.
-4. Click **Apply**.
-
-#### Method B: Manual Web Service Setup
-1. In Render Dashboard, click **"New +"** -> **"Web Service"**.
-2. Connect your repository.
-3. Configure the settings:
-   - **Name**: `bhu-aadhaar-3d-backend`
-   - **Region**: Singapore or Frankfurt
-   - **Language**: Python 3
-   - **Branch**: main
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-   - **Plan**: Free
-4. (Optional) Add environment variables for PostgreSQL:
-   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
-   *(Note: If no database is configured, the backend automatically uses the built-in high-performance Indian colony dataset with 100% feature parity!)*
-5. Click **Deploy Web Service**.
-6. Copy your Render service URL (e.g. `https://bhu-aadhaar-3d-backend.onrender.com`) and paste it into the frontend's API Config modal.
-
----
-
-## 💻 Local Development
-
-### 1. Install Requirements
-```bash
-pip install -r requirements.txt
+REST API Backend (FastAPI / Python 3.10+)
+├── Spatial Projection & Geometry: Shapely, PyProj, Math
+├── CRS Engine: EPSG:4326 (WGS84) -> EPSG:32643 (UTM 43N) / EGM2008 MSL Datum
+├── Cadastral File Parser: Handles GeoJSON, AutoCAD DXF, and KML
+└── Identity Masking: SHA-256 e-KYC token generation
 ```
 
-### 2. Run the Full Stack Service
-```bash
-python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
-```
+### Coordinate Reference Systems (CRS)
+- **Horizontal**: Input coordinates in WGS84 (`EPSG:4326`) are reprojected to UTM Zone 43N (`EPSG:32643`) or Web Mercator (`EPSG:3857`) for metric calculations.
+- **Vertical**: Elevation values ($Z$) are referenced to the Survey of India GTS Benchmark datum using the EGM2008 Geoid model for orthometric height above Mean Sea Level.
 
-### 3. Open in Browser
-Visit **`http://localhost:8000`** in your web browser. Both the interactive frontend portal and all REST API endpoints are served simultaneously.
+### ULPIN Syntax Specification
+Follows the Survey of India / NIC 14-digit alphanumeric standard for base parcels, appending strata tokens for vertical subdivisions:
+
+```
+Root Parcel (Ground):          IN2877214100A1
+Strata Unit (4th Floor Flat):  IN2877214100A1/L04/U401
+Basement Parking:              IN2877214100A1/B01/PARK
+Ground Floor Commercial:       IN2877214100A1/L01/RET02
+```
 
 ---
 
-## 📡 Core API Endpoints
+## Repository Structure
 
-| Method | Endpoint | Description |
+```
+.
+├── main.py                     # FastAPI application and spatial endpoints
+├── index.html                  # Three.js 3D cadastre frontend application
+├── requirements.txt            # Python dependencies
+├── render.yaml                 # Render deployment configuration
+├── vercel.json                 # Vercel deployment configuration
+├── Dockerfile                  # Container definition for backend service
+├── setup_database.py           # Optional PostgreSQL/PostGIS schema initializer
+├── generate_documentation.py   # Script to generate .docx and .pptx reports
+│
+├── Sample Cadastral Files (for testing upload):
+│   ├── sample_cadastre_plot_342_1.geojson
+│   ├── sample_township_plot.dxf
+│   └── sample_land_parcel.kml
+│
+└── Generated Documentation:
+    ├── Bhu_Aadhaar_3D_Comprehensive_Technical_Report.docx
+    └── Bhu_Aadhaar_3D_Judges_Presentation.pptx
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Python 3.10 or higher
+- Modern web browser with WebGL enabled (Chrome, Edge, Firefox, Safari)
+
+### Local Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/3d_mapping.git
+   cd 3d_mapping
+   ```
+
+2. **Create and activate a virtual environment**:
+   ```bash
+   python -m venv venv
+   # On Windows:
+   .\venv\Scripts\activate
+   # On Linux/macOS:
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the application**:
+   ```bash
+   uvicorn main:app --reload --host 127.0.0.1 --port 8000
+   ```
+
+5. **Open in browser**:
+   Navigate to `http://127.0.0.1:8000`. The server hosts both the API endpoints and the static 3D frontend.
+
+---
+
+## Testing File Uploads
+
+You can test the 2D-to-3D cadastre conversion using the sample files included in the root directory:
+
+1. Open the web interface.
+2. In the left panel, locate the **Officer Cadastre Portal**.
+3. Choose either:
+   - `sample_cadastre_plot_342_1.geojson`: Contains 4-vertex plot boundaries with Khasra, Jamabandi, and land use metadata.
+   - `sample_township_plot.dxf`: AutoCAD ASCII DXF format containing polyline boundary entities.
+   - `sample_land_parcel.kml`: Keyhole Markup Language boundary polygon.
+4. Set the desired number of floors, plinth height, and setback values.
+5. Click **Process & Extrude to 3D Cadastre**. The system calculates the centroid, generates the 14-digit ULPIN, displays the 3D volume in the colony view, and generates a downloadable 3D Property Card.
+
+---
+
+## API Reference
+
+| Method | Route | Description |
 |---|---|---|
-| `GET` | `/` | Serves the interactive 3D Bhu-Aadhaar frontend portal |
-| `GET` | `/health` | Service health check for Render & uptime monitors |
-| `GET` | `/api/cadastre/3d-layers` | Retrieves all 3D colony layers (Govt, Strata, Roads, Utilities, Metro) |
-| `GET` | `/api/cadastre/stats` | Colony statistics (parcels, strata units, volume, circle rates) |
-| `POST` | `/api/cadastre/officer-upload` | Officer 2D cadastre ingestion, ULPIN calculation, and 3D extrusion |
-| `POST` | `/api/cadastre/generate-3d-ulpin` | Standardized 3D Bhu-Aadhaar ULPIN generator |
-| `GET` | `/api/cadastre/parcel/{ulpin}` | Statutory Record of Rights (RoR) for a specific parcel |
-| `POST` | `/api/ai/validate-topology` | 3D spatial buffer & setback encroachment audit |
-| `GET` | `/api/cadastre/dem-profile` | Bare-earth DEM vs Digital Surface Model (DSM) transect |
-| `GET` | `/api/cadastre/lidar-pointcloud` | Sample classified drone LiDAR point cloud points |
+| `GET` | `/` | Serves the single-page 3D application |
+| `GET` | `/health` | Health check endpoint |
+| `GET` | `/api/cadastre/3d-layers` | Retrieves all 3D colony layer meshes (parcels, roads, utilities, metro) |
+| `GET` | `/api/cadastre/stats` | Summary statistics (parcel counts, strata units, volume, circle rates) |
+| `POST` | `/api/cadastre/parse-file` | Parses uploaded GeoJSON, DXF, or KML files |
+| `POST` | `/api/cadastre/officer-upload` | Extrudes 2D polygon into 3D parcel and assigns ULPIN |
+| `POST` | `/api/cadastre/generate-3d-ulpin` | Computes 14-digit NIC-compliant ULPIN from coordinates |
+| `GET` | `/api/cadastre/parcel/{ulpin}` | Returns Record of Rights (RoR) data for a parcel |
+| `POST` | `/api/ai/validate-topology` | Performs 3D setback and encroachment collision verification |
 
 ---
 
-## 📜 Compliance & Standards
-- **LADM (ISO 19152)**: International Land Administration Domain Model 3D volumetric rights, restrictions, and responsibilities (RRR).
-- **DILRMP**: Digital India Land Records Modernization Programme.
-- **SVAMITVA Scheme**: Ministry of Panchayati Raj & Survey of India.
+## Deployment
+
+### Frontend (Vercel)
+The root folder is configured with `vercel.json` for static deployment.
+1. Connect this repository to Vercel.
+2. Leave root directory as `./` and framework as `Other`.
+3. Deploy. If connecting to a remote backend, set the backend URL in the web UI via the **API Config** modal.
+
+### Backend (Render)
+The repository includes a `render.yaml` blueprint.
+1. In Render, select **New > Blueprint** and point to your repository.
+2. Render detects `render.yaml` and deploys the FastAPI service.
+3. Alternatively, deploy as a **Web Service** using Docker via the included `Dockerfile`.
+
+*Note: The backend operates with an in-memory spatial database by default. To connect a live database, provide standard PostgreSQL/PostGIS credentials via environment variables (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`).*
+
+---
+
+## Standards & Specifications
+
+- **ISO 19152 (LADM)**: Geographic information — Land Administration Domain Model (Part 1: Generic conceptual model, Part 2: Land registration).
+- **Survey of India / DoLR Guidelines**: Standard Operating Procedure for Unique Land Parcel Identification Number (ULPIN / Bhu-Aadhaar).
+- **RERA (Real Estate Regulatory Authority)**: Standardized definition of carpet area and proportional undivided share of land.
+- **Digital Personal Data Protection Act, 2023**: Zero-knowledge tokenization of citizen identifiers (Aadhaar/PAN) in public cadastral systems.
