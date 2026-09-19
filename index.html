@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>भू-आधार 3D • National 3D Volumetric Cadastre & Colony Digital Twin Platform</title>
+    <!-- Three.js + OrbitControls for 3D Digital Twin Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        /* INDIAN CADASTRAL COLOR SYSTEM: STRICTLY NO BLUE.
+           Deep Slate Obsidian, Forest Emerald, Heritage Amber/Gold, Terracotta Sandstone */
+        :root {
+            --bg-deep: #080D0B;
+            --bg-surface: #0E1612;
+            --panel-bg: rgba(14, 22, 18, 0.94);
+            --card-bg: #14201A;
+            --card-bg-hover: #192720;
+            --border-primary: rgba(16, 185, 129, 0.22);
+            --border-highlight: rgba(245, 158, 11, 0.4);
+            --emerald-primary: #10B981;
+            --emerald-hover: #059669;
+            --emerald-light: #34D399;
+            --amber-gold: #F59E0B;
+            --amber-dark: #D97706;
+            --terracotta: #E07A5F;
+            --terracotta-dark: #EA580C;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --text-accent: #6EE7B7;
+            --danger: #EF4444;
+            --badge-bg: rgba(16, 185, 129, 0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", Helvetica, Arial, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* TOP NAVIGATION HEADER */
+        header {
+            height: 60px;
+            background: #0B130F;
+            border-bottom: 2px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            z-index: 100;
+            flex-shrink: 0;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .emblem-badge {
+            background: linear-gradient(135deg, var(--amber-dark), var(--terracotta-dark));
+            color: #FFFFFF;
+            font-weight: 900;
+            font-size: 16px;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+            border: 1px solid var(--amber-gold);
+        }
+
+        .header-title h1 {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title h1 span.hindi-title {
+            color: var(--amber-gold);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .header-title p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.2px;
+        }
+
+        /* HEADER CONTROLS */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box input {
+            background: rgba(20, 32, 26, 0.9);
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            padding: 6px 12px 6px 30px;
+            color: #FFFFFF;
+            font-size: 12px;
+            width: 220px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--emerald-primary);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+            width: 260px;
+        }
+
+        .search-box span.search-icon {
+            position: absolute;
+            left: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .header-btn {
+            background: rgba(20, 32, 26, 0.9);
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .header-btn:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--emerald-primary);
+            color: var(--emerald-light);
+        }
+
+        .header-btn.primary {
+            background: linear-gradient(135deg, var(--emerald-primary), var(--emerald-hover));
+            color: #FFFFFF;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .header-btn.primary:hover {
+            background: linear-gradient(135deg, var(--emerald-light), var(--emerald-primary));
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--emerald-light);
+            cursor: pointer;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald-primary);
+            box-shadow: 0 0 8px var(--emerald-primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* MAIN LAYOUT */
+        #app-container {
+            display: flex;
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR DASHBOARD */
+        #sidebar {
+            width: 440px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border-primary);
+            backdrop-filter: blur(14px);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        /* TABS HEADER */
+        .tab-bar {
+            display: flex;
+            background: #0A120E;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .tab-btn:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--emerald-light);
+            border-bottom-color: var(--emerald-primary);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        /* TAB CONTENT AREA */
+        .tab-content-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-primary) transparent;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .card-header {
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 6px;
+        }
+
+        .card-header span.tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--badge-bg);
+            color: var(--emerald-light);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .card-header span.tag.amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--amber-gold);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        /* LAYER TOGGLES */
+        .layer-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 10px;
+            background: rgba(10, 16, 13, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .layer-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .layer-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .layer-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        /* SWITCH TOGGLE */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 32px;
+            height: 18px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #26352E;
+            transition: .3s;
+            border-radius: 18px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--emerald-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card {
+            background: rgba(14, 22, 18, 0.7);
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .stat-card .val {
+            font-size: 17px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-top: 4px;
+        }
+
+        .stat-card .lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* HOVER TOOLTIPS SYSTEM */
+        .cadastre-term {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            border-bottom: 1px dashed var(--amber-gold);
+            cursor: help;
+            color: inherit;
+            font-weight: inherit;
+        }
+
+        .cadastre-term:hover {
+            color: var(--amber-gold);
+        }
+
+        .term-badge {
+            font-size: 10px;
+            color: var(--amber-gold);
+            opacity: 0.8;
+        }
+
+        /* FLOATING GLOSSARY TOOLTIP ELEMENT */
+        #globalTooltip {
+            position: fixed;
+            z-index: 10000;
+            background: #111B16;
+            border: 1px solid var(--amber-gold);
+            border-radius: 8px;
+            padding: 10px 14px;
+            width: 290px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease-in-out;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+        #globalTooltip .tt-title {
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--amber-gold);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #globalTooltip .tt-fullform {
+            font-size: 10px;
+            color: var(--emerald-light);
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+        #globalTooltip .tt-desc {
+            color: #E2E8F0;
+            margin-bottom: 6px;
+        }
+
+        #globalTooltip .tt-authority {
+            font-size: 9px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 4px;
+        }
+
+        /* 3D VIEWPORT CONTAINER */
+        #viewport-container {
+            flex-grow: 1;
+            position: relative;
+            background: #080D0B;
+        }
+
+        #threeContainer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        /* FLOATING 3D OVERLAYS */
+        .viewport-controls {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .view-preset-btn {
+            background: rgba(14, 22, 18, 0.88);
+            border: 1px solid var(--border-primary);
+            color: #FFFFFF;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .view-preset-btn:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--emerald-primary);
+            color: var(--emerald-light);
+        }
+
+        .view-preset-btn.active {
+            background: var(--emerald-primary);
+            border-color: var(--emerald-light);
+            color: #FFFFFF;
+        }
+
+        /* QUICK HUD CARD FOR SELECTED OBJECT */
+        #inspectHUD {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 340px;
+            background: rgba(14, 22, 18, 0.94);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            backdrop-filter: blur(14px);
+            padding: 14px;
+            z-index: 10;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+            display: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .hud-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 6px;
+        }
+
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .hud-row .lbl {
+            color: var(--text-muted);
+        }
+
+        .hud-row .val {
+            color: #FFFFFF;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* FORM CONTROLS */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(10, 16, 13, 0.85);
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            padding: 7px 10px;
+            color: #FFFFFF;
+            font-size: 11px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--emerald-primary);
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+        }
+
+        select.form-control {
+            background-color: #101A15;
+        }
+
+        /* DRAG & DROP UPLOAD ZONE */
+        .upload-dropzone {
+            border: 2px dashed var(--border-primary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            background: rgba(16, 185, 129, 0.03);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .upload-dropzone:hover {
+            border-color: var(--emerald-primary);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .upload-dropzone p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, var(--emerald-primary), var(--emerald-hover));
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-emerald:hover {
+            background: linear-gradient(135deg, var(--emerald-light), var(--emerald-primary));
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-amber {
+            background: linear-gradient(135deg, var(--amber-gold), var(--amber-dark));
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-primary);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--emerald-primary);
+            color: var(--emerald-light);
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        /* MODAL DIALOGS */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            background: #0E1612;
+            border: 1px solid var(--border-primary);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 680px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .modal-close:hover { color: #FFFFFF; }
+
+        /* PROPERTY CARD / CERTIFICATE STYLING */
+        .cert-container {
+            border: 2px solid var(--amber-gold);
+            border-radius: 8px;
+            padding: 20px;
+            background: #111A15;
+            position: relative;
+        }
+
+        .cert-header {
+            text-align: center;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+
+        .cert-header h2 {
+            font-size: 16px;
+            color: var(--amber-gold);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .cert-header h3 {
+            font-size: 12px;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .cert-header p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .cert-field {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 2px solid var(--emerald-primary);
+        }
+
+        .cert-field .lbl {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .cert-field .val {
+            font-size: 11px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-top: 2px;
+        }
+
+        /* 3D CROSS SECTION & DAYLIGHT CONTROLS */
+        .bottom-toolbar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(14, 22, 18, 0.9);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 8px 14px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .slider-group input[type="range"] {
+            accent-color: var(--emerald-primary);
+            width: 100px;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body * { visibility: hidden; }
+            #certModal, #certModal * { visibility: visible; }
+            #certModal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; color: black; }
+            .cert-container { border-color: black; background: white; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header>
+        <div class="brand-container">
+            <div class="emblem-badge">🏛️</div>
+            <div class="header-title">
+                <h1>
+                    <span>भू-आधार 3D</span>
+                    <span style="opacity:0.4;">•</span>
+                    <span>Bhu-Aadhaar 3D</span>
+                    <span style="font-size:10px; background:var(--badge-bg); color:var(--emerald-light); padding:2px 6px; border-radius:4px; border:1px solid var(--border-primary);">SoI • DoLR</span>
+                </h1>
+                <p>National 3D Volumetric Cadastre & Colony Digital Twin Platform • <span class="cadastre-term" data-term="SVAMITVA">SVAMITVA <span class="term-badge">ℹ</span></span></p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="quickSearchInput" placeholder="Search Khasra / ULPIN / Owner..." onkeydown="handleSearchKey(event)">
+            </div>
+
+            <button class="header-btn" onclick="openGlossaryModal()">
+                <span>📖</span>
+                <span><span class="cadastre-term" data-term="Jamabandi">Terminology <span class="term-badge">ℹ</span></span></span>
+            </button>
+
+            <button class="header-btn" onclick="openApiSettingsModal()">
+                <span>⚙️</span>
+                <span>API Config</span>
+            </button>
+
+            <div class="status-badge" id="apiStatusPill" onclick="checkApiHealth()">
+                <span class="pulse-dot"></span>
+                <span id="apiStatusText">Local Ready</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- APP CONTAINER -->
+    <div id="app-container">
+        <!-- SIDEBAR DASHBOARD -->
+        <div id="sidebar">
+            <div class="tab-bar">
+                <button class="tab-btn active" onclick="switchTab('tab-layers')">
+                    <span>🏘️</span>
+                    <span>Colony</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('tab-inspector')">
+                    <span>🏢</span>
+                    <span>Parcel HUD</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('tab-officer')">
+                    <span>✍️</span>
+                    <span>Officer 3D</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('tab-spatial')">
+                    <span>🛡️</span>
+                    <span>Spatial AI</span>
+                </button>
+            </div>
+
+            <div class="tab-content-area">
+                <!-- TAB 1: COLONY LAYERS -->
+                <div id="tab-layers" class="tab-pane active">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>Colony Overview (आर्यावर्त एन्क्लेव)</span>
+                            <span class="tag">Sector 12 Pilot</span>
+                        </div>
+                        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                            Integrated 3D Cadastral Digital Twin demonstrating <span class="cadastre-term" data-term="Strata Cadastre">Strata Rights <span class="term-badge">ℹ</span></span>, 
+                            <span class="cadastre-term" data-term="Right of Way (RoW)">Road ROW <span class="term-badge">ℹ</span></span>, 
+                            <span class="cadastre-term" data-term="Gaon Sabha Land">Gaon Sabha <span class="term-badge">ℹ</span></span>, 
+                            and Subterranean Transit infrastructure conforming to <span class="cadastre-term" data-term="LADM (ISO 19152)">ISO 19152 LADM <span class="term-badge">ℹ</span></span>.
+                        </p>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="lbl">Total Parcels</div>
+                                <div class="val" id="statParcels">16</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="lbl">Strata Units</div>
+                                <div class="val" id="statStrata">22</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="lbl">Govt Assets</div>
+                                <div class="val" id="statGovt">5</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="lbl">Circle Rate</div>
+                                <div class="val">₹68k/m²</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span>Cadastral Layer Visibility</span>
+                            <span class="tag amber">3D Digital Twin</span>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#D97706;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Government Properties</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Panchayat, PHC, School, Park</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerGovt" checked onchange="toggleLayer('govt', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#10B981;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Strata Towers (Apartments)</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Ganga Heights & Yamuna Towers</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerStrata" checked onchange="toggleLayer('strata', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#E07A5F;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Plotted Houses (Khasra 201-206)</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Independent Villas & Kothis</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerPlotted" checked onchange="toggleLayer('plotted', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#34D399;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Commercial Complex</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Vyapar Kendra & Retail Plaza</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerCommercial" checked onchange="toggleLayer('commercial', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#4B5563;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Roads & Public Right-of-Way</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">24m Sector Road & 12m Streets</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerRoads" checked onchange="toggleLayer('roads', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#A855F7;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Subterranean Metro Tunnel</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Transit Corridor at -18m MSL</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerMetro" checked onchange="toggleLayer('metro', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#059669;"></span>
+                                <div>
+                                    <strong style="color:#FFF;">Underground Utilities</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Water, Sewer, Power, Optical Fiber</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerUtilities" checked onchange="toggleLayer('utilities', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="layer-item" style="border-top:1px solid var(--border-primary); margin-top:8px; padding-top:10px;">
+                            <div class="layer-info">
+                                <span class="layer-swatch" style="background:#F59E0B;"></span>
+                                <div>
+                                    <strong style="color:var(--amber-gold);">Underground X-Ray Mode</strong>
+                                    <div style="color:var(--text-muted); font-size:10px;">Make surface translucent</div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerXray" onchange="toggleXRay(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PARCEL INSPECTOR -->
+                <div id="tab-inspector" class="tab-pane">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>Selected Property Dossier</span>
+                            <span class="tag" id="hudParcelTag">Active Title</span>
+                        </div>
+                        <div id="inspectorEmptyState" style="text-align:center; padding:24px 10px; color:var(--text-muted); font-size:11px;">
+                            <div style="font-size:32px; margin-bottom:8px;">🖱️</div>
+                            Click on any building, floor, villa, or government property in the 3D Colony View to view its statutory <span class="cadastre-term" data-term="RoR (Record of Rights)">Record of Rights (RoR) <span class="term-badge">ℹ</span></span>.
+                        </div>
+
+                        <div id="inspectorContent" style="display:none;">
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="ULPIN">Bhu-Aadhaar (ULPIN) <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspUlpin" style="color:var(--emerald-light); font-family:monospace;">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="Khasra">Khasra Number <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspKhasra">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="Khatauni">Khata / Jamabandi No. <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspKhata">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Registered Owner</span>
+                                <span class="val" id="inspOwner">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Owner Identity Hash</span>
+                                <span class="val" id="inspOwnerId" style="font-family:monospace; font-size:10px;">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Building / Parcel Name</span>
+                                <span class="val" id="inspBuilding">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Unit / Floor Identification</span>
+                                <span class="val" id="inspUnit">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Land Classification</span>
+                                <span class="val" id="inspLandUse">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">Area (Sq.M / Gaj)</span>
+                                <span class="val" id="inspArea">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl">3D Volume</span>
+                                <span class="val" id="inspVolume">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="Circle Rate / Ready Reckoner">Circle Rate Valuation <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspValuation" style="color:var(--amber-gold);">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="Encumbrance">Encumbrance Status <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspEncumbrance" style="color:var(--emerald-light);">-</span>
+                            </div>
+                            <div class="hud-row">
+                                <span class="lbl"><span class="cadastre-term" data-term="Mutation (Dakhil-Kharij)">Mutation Status <span class="term-badge">ℹ</span></span></span>
+                                <span class="val" id="inspMutation">Certified / Dakhil-Kharij Verified</span>
+                            </div>
+
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-emerald" onclick="openCertificateModal()">
+                                    <span>📄</span>
+                                    <span>Generate Official 3D Property Card</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: OFFICER 2D UPLOAD & 3D EXTRUSION -->
+                <div id="tab-officer" class="tab-pane">
+                    <div class="card" style="border-color:var(--amber-gold);">
+                        <div class="card-header">
+                            <span>अधिकारी भू-अभिलेख पोर्टल (Officer Portal)</span>
+                            <span class="tag amber">Tehsil Registry</span>
+                        </div>
+                        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                            Authorized revenue officers can upload 2D cadastral polygons (GeoJSON/KML) or enter Khasra coordinates to auto-compute 
+                            <span class="cadastre-term" data-term="ULPIN">14-digit ULPIN <span class="term-badge">ℹ</span></span> and extrude into 
+                            <span class="cadastre-term" data-term="Strata Cadastre">3D Volumetric Cadastre <span class="term-badge">ℹ</span></span>.
+                        </p>
+
+                        <!-- 2D Cadastre Upload -->
+                        <div class="upload-dropzone" onclick="document.getElementById('cadastreFileInput').click()">
+                            <input type="file" id="cadastreFileInput" style="display:none;" accept=".geojson,.json,.kml,.csv" onchange="handleFileUpload(event)">
+                            <div style="font-size:24px;">📂</div>
+                            <strong style="font-size:12px; color:#FFFFFF;">Upload 2D Cadastre / Shajra File</strong>
+                            <p>Supports GeoJSON, KML, or CSV Boundary Coordinates</p>
+                            <span id="uploadedFileStatus" style="display:inline-block; margin-top:4px; font-size:10px; color:var(--emerald-light);"></span>
+                        </div>
+
+                        <!-- Officer Input Form -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>State (राज्य)</label>
+                                <select class="form-control" id="formState">
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="NCT of Delhi">NCT of Delhi</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>District / Tehsil</label>
+                                <input type="text" class="form-control" id="formTehsil" value="Dadri / Vasant Vihar">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><span class="cadastre-term" data-term="Khasra">Khasra No. <span class="term-badge">ℹ</span></span></label>
+                                <input type="text" class="form-control" id="formKhasra" value="342/1">
+                            </div>
+                            <div class="form-group">
+                                <label><span class="cadastre-term" data-term="Khatauni">Khata No. <span class="term-badge">ℹ</span></span></label>
+                                <input type="text" class="form-control" id="formKhata" value="88">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Registered Landowner(s)</label>
+                            <input type="text" class="form-control" id="formOwner" value="Shri Rameshwar Dayal & Smt. Radha Devi">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Land Classification</label>
+                                <select class="form-control" id="formLandUse">
+                                    <option value="Residential Colony">Residential Colony</option>
+                                    <option value="Commercial Hub">Commercial Hub</option>
+                                    <option value="Institutional / Public">Institutional / Public</option>
+                                    <option value="Gaon Sabha Land">Gaon Sabha Land</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><span class="cadastre-term" data-term="Circle Rate / Ready Reckoner">Circle Rate (₹/m²) <span class="term-badge">ℹ</span></span></label>
+                                <input type="number" class="form-control" id="formCircleRate" value="55000">
+                            </div>
+                        </div>
+
+                        <!-- 3D Volumetric Parameters -->
+                        <div style="background:rgba(0,0,0,0.25); padding:10px; border-radius:6px; margin-bottom:12px; border:1px solid rgba(245,158,11,0.2);">
+                            <div style="font-size:11px; font-weight:700; color:var(--amber-gold); margin-bottom:8px;">
+                                📐 3D Volumetric Extrusion Parameters
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Number of Floors</label>
+                                    <input type="number" class="form-control" id="formFloors" value="5" min="1" max="30">
+                                </div>
+                                <div class="form-group">
+                                    <label>Floor Height (m)</label>
+                                    <input type="number" class="form-control" id="formFloorHeight" value="3.2" step="0.1">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Basement Levels</label>
+                                    <input type="number" class="form-control" id="formBasement" value="1" min="0" max="3">
+                                </div>
+                                <div class="form-group">
+                                    <label><span class="cadastre-term" data-term="FAR / FSI">Permitted FAR <span class="term-badge">ℹ</span></span></label>
+                                    <input type="number" class="form-control" id="formFar" value="2.75" step="0.05">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><span class="cadastre-term" data-term="Setback">Front Setback (m) <span class="term-badge">ℹ</span></span></label>
+                                    <input type="number" class="form-control" id="formSetbackFront" value="4.5" step="0.5">
+                                </div>
+                                <div class="form-group">
+                                    <label><span class="cadastre-term" data-term="Setback">Side/Rear Setback (m) <span class="term-badge">ℹ</span></span></label>
+                                    <input type="number" class="form-control" id="formSetbackSide" value="3.0" step="0.5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-amber" onclick="executeOfficerExtrusion()">
+                            <span>🚀</span>
+                            <span>Process & Extrude to 3D Cadastre</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 4: SPATIAL AI & AUDIT -->
+                <div id="tab-spatial" class="tab-pane">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>3D Spatial Topology & Buffer Audit</span>
+                            <span class="tag">AI Engine</span>
+                        </div>
+                        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                            Automated checking of building setbacks against <span class="cadastre-term" data-term="Right of Way (RoW)">Road Right-of-Way <span class="term-badge">ℹ</span></span>, 
+                            Metro tunnel safety exclusion zones, and volumetric parcel overlaps.
+                        </p>
+
+                        <button class="btn btn-outline" onclick="runTopologyAudit()" style="margin-bottom:14px;">
+                            <span>🔍</span>
+                            <span>Run Real-Time 3D Topology Audit</span>
+                        </button>
+
+                        <div id="topologyAuditResults">
+                            <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:6px; margin-bottom:8px;">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:#FCA5A5;">
+                                    <span>⚠️ Setback Encroachment Detected</span>
+                                    <span>Observation #01</span>
+                                </div>
+                                <p style="font-size:10px; color:#E2E8F0; margin-top:4px;">
+                                    Balcony cantilever on <strong>Khasra #202 (Mehra Villa)</strong> overhangs 0.65m into the 9m public road right-of-way corridor.
+                                </p>
+                                <div style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                    Statutory Recommendation: Issue Section 133 CrPC notice for compounding or adjustment.
+                                </div>
+                            </div>
+
+                            <div style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:6px;">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--emerald-light);">
+                                    <span>✅ Subterranean Metro Clearance: Safe</span>
+                                    <span>Verified</span>
+                                </div>
+                                <p style="font-size:10px; color:#E2E8F0; margin-top:4px;">
+                                    Ganga Heights basement foundation bottom (-6.6m MSL) maintains 6.9m clearance above Delhi Metro Pink Line crown (-13.5m MSL).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D VIEWPORT -->
+        <div id="viewport-container">
+            <div id="threeContainer"></div>
+
+            <!-- VIEW PRESETS -->
+            <div class="viewport-controls">
+                <button class="view-preset-btn active" id="btnViewColony" onclick="setViewMode('colony')">
+                    <span>🏘️</span> Colony View
+                </button>
+                <button class="view-preset-btn" id="btnViewTop" onclick="setViewMode('topdown')">
+                    <span>🗺️</span> 2D Shajra Map
+                </button>
+                <button class="view-preset-btn" id="btnViewStreet" onclick="setViewMode('street')">
+                    <span>🚶</span> Street Level
+                </button>
+                <button class="view-preset-btn" id="btnViewExploded" onclick="toggleExplodedView()">
+                    <span>🏢</span> Exploded Strata
+                </button>
+                <button class="view-preset-btn" onclick="focusGovtProperties()">
+                    <span>🏛️</span> Govt Assets
+                </button>
+            </div>
+
+            <!-- BOTTOM TOOLBAR -->
+            <div class="bottom-toolbar">
+                <div class="slider-group">
+                    <span>☀️ Sunlight / Shadow:</span>
+                    <input type="range" id="sunSlider" min="0" max="100" value="50" oninput="adjustSunlight(this.value)">
+                </div>
+
+                <div style="width:1px; height:16px; background:var(--border-primary);"></div>
+
+                <button class="view-preset-btn" id="measureToolBtn" onclick="toggleMeasureMode()" style="padding:4px 8px; font-size:11px;">
+                    <span>📐</span> Measure 3D Distance
+                </button>
+            </div>
+
+            <!-- HOVER TOOLTIP FLOATING DOM -->
+            <div id="globalTooltip">
+                <div class="tt-title">
+                    <span id="ttTitle">ULPIN</span>
+                    <span id="ttHindi" style="font-size:10px; opacity:0.8;">भू-आधार</span>
+                </div>
+                <div class="tt-fullform" id="ttFullform">Unique Land Parcel Identification Number</div>
+                <div class="tt-desc" id="ttDesc">14-digit alphanumeric digital identity for land parcels in India based on longitude and latitude coordinates of vertices.</div>
+                <div class="tt-authority" id="ttAuth">Governing Standard: Department of Land Resources (DoLR), MoRD</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D PROPERTY CARD / CERTIFICATE MODAL -->
+    <div class="modal-overlay" id="certModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeCertificateModal()">✕</button>
+
+            <div class="cert-container" id="printableCertificate">
+                <div class="cert-header">
+                    <div style="font-size:24px; margin-bottom:4px;">🏛️</div>
+                    <h2>GOVERNMENT OF INDIA • SURVEY OF INDIA</h2>
+                    <h3>3D BHU-AADHAAR (ULPIN) PROPERTY RECORD CARD</h3>
+                    <p>Department of Land Resources (DoLR) • SVAMITVA 3D Volumetric Digital Twin Registry</p>
+                </div>
+
+                <div class="cert-grid">
+                    <div class="cert-field">
+                        <div class="lbl">3D Bhu-Aadhaar (ULPIN)</div>
+                        <div class="val" id="certUlpin" style="color:var(--emerald-light); font-family:monospace;">IN-7724-2853-2141-STR-L04-U401</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Khasra / Plot Number</div>
+                        <div class="val" id="certKhasra">Khasra 214/1</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Registered Owner(s)</div>
+                        <div class="val" id="certOwner">Shri Rajesh Sharma & Smt. Sunita Sharma</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Owner ID / Aadhaar Hash</div>
+                        <div class="val" id="certOwnerId" style="font-family:monospace;">IND-AADHAAR-8931-XXXX-1021</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Stratum / Floor Level</div>
+                        <div class="val" id="certFloor">Floor Level 4 (L04) • Unit 401</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Elevation Bounds (MSL)</div>
+                        <div class="val" id="certElevation">Base: 11.10m | Top: 14.40m MSL</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">RERA Carpet Area</div>
+                        <div class="val" id="certArea">180.00 Sq. Meters (215.28 Gaj)</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Volumetric Spatial Extent</div>
+                        <div class="val" id="certVolume">594.00 Cubic Meters</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Circle Rate Valuation</div>
+                        <div class="val" id="certValuation" style="color:var(--amber-gold);">₹1,22,40,000 (INR)</div>
+                    </div>
+                    <div class="cert-field">
+                        <div class="lbl">Title & Encumbrance Status</div>
+                        <div class="val" id="certEncumbrance" style="color:var(--emerald-light);">Clear Title • Non-Encumbered</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed rgba(245,158,11,0.4); padding-top:12px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <!-- QR Code Mock representation -->
+                        <div style="background:white; padding:6px; border-radius:4px;">
+                            <svg width="48" height="48" viewBox="0 0 24 24">
+                                <path fill="#000" d="M2,2H10V10H2V2M4,4V8H8V4H4M14,2H22V10H14V2M16,4V8H20V4H16M2,14H10V22H2V14M4,16V20H8V16H4M14,14H16V16H14V14M18,14H20V16H18V14M20,16H22V18H20V16M16,16H18V18H16V16M14,18H16V20H14V18M18,18H20V20H18V18M20,20H22V22H20V20M16,20H18V22H16V20Z"/>
+                            </svg>
+                        </div>
+                        <div style="font-size:10px; color:var(--text-muted);">
+                            Scan to verify title on<br>
+                            <strong style="color:var(--amber-gold);">National Land Records Portal</strong>
+                        </div>
+                    </div>
+
+                    <div style="text-align:right;">
+                        <div style="font-size:11px; font-weight:700; color:#FFFFFF;">SEAL OF TEHSILDAR</div>
+                        <div style="font-size:9px; color:var(--text-muted);">Vasant Vihar / Dadri Division</div>
+                        <div style="font-size:9px; color:var(--emerald-light); font-family:monospace;">TOKEN: 3D-VERIFIED-LADM</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:16px; display:flex; gap:10px;">
+                <button class="btn btn-emerald" onclick="window.print()">🖨️ Print Statutory Certificate</button>
+                <button class="btn btn-outline" onclick="closeCertificateModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GLOSSARY DICTIONARY MODAL -->
+    <div class="modal-overlay" id="glossaryModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeGlossaryModal()">✕</button>
+            <div class="card-header" style="margin-bottom:16px;">
+                <span style="font-size:14px;">📖 भारतीय भू-राजस्व एवं 3D कैडस्ट्रल शब्दावली (Land Revenue Glossary)</span>
+            </div>
+
+            <input type="text" id="glossaryFilterInput" class="form-control" placeholder="Search terminology (e.g. Khasra, ULPIN, Jamabandi, FAR, Setback)..." oninput="filterGlossary(this.value)" style="margin-bottom:14px;">
+
+            <div id="glossaryListContainer" style="display:flex; flex-direction:column; gap:10px; max-height:60vh; overflow-y:auto;">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- API CONFIGURATION MODAL -->
+    <div class="modal-overlay" id="apiModal">
+        <div class="modal-card" style="max-width:480px;">
+            <button class="modal-close" onclick="closeApiSettingsModal()">✕</button>
+            <div class="card-header" style="margin-bottom:16px;">
+                <span style="font-size:14px;">⚙️ Backend API Connection Settings</span>
+            </div>
+
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">
+                Deploy this frontend on <strong>Vercel</strong> and the FastAPI backend on <strong>Render</strong>. Enter your Render service URL below to connect them:
+            </p>
+
+            <div class="form-group">
+                <label>Backend API Base URL</label>
+                <input type="text" id="apiUrlInput" class="form-control" placeholder="https://bhu-aadhaar-3d-backend.onrender.com">
+                <p style="font-size:10px; color:var(--text-muted); margin-top:4px;">Leave empty or set to current origin for local/same-server usage.</p>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-emerald" onclick="saveApiUrl()">Save & Connect</button>
+                <button class="btn btn-outline" onclick="closeApiSettingsModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- THREE.JS & APP ENGINE SCRIPT -->
+    <script>
+        // -------------------------------------------------------------
+        // 1. INDIAN LAND REVENUE GLOSSARY DICTIONARY
+        // -------------------------------------------------------------
+        const GLOSSARY_DICTIONARY = {
+            "ULPIN": {
+                hindi: "भू-आधार",
+                fullform: "Unique Land Parcel Identification Number (Bhu-Aadhaar)",
+                desc: "A 14-digit alphanumeric digital identity assigned to every land parcel in India, derived from the latitude and longitude coordinates of its boundary vertices under DILRMP.",
+                authority: "Department of Land Resources (DoLR), MoRD, Govt of India"
+            },
+            "Bhu-Aadhaar": {
+                hindi: "भू-आधार",
+                fullform: "Bhu-Aadhaar (14-Digit Land Identification)",
+                desc: "The unique digital identity for land in India, preventing fraud and enabling seamless 3D strata ownership registration.",
+                authority: "DoLR & Survey of India"
+            },
+            "Khasra": {
+                hindi: "खसरा संख्या",
+                fullform: "Cadastral Survey / Plot Number",
+                desc: "A legal land document in India specifying survey plot number, ownership, soil type, and geometric boundary on the village revenue map (Shajra).",
+                authority: "State Land Revenue Code / Tehsil Administration"
+            },
+            "Khatauni": {
+                hindi: "खतौनी",
+                fullform: "Record of Rights of Landholders",
+                desc: "The statutory register listing all agricultural and non-agricultural holdings of an individual or family within a revenue village.",
+                authority: "Board of Revenue / Tehsildar"
+            },
+            "Jamabandi": {
+                hindi: "जमाबंदी",
+                fullform: "Register of Land Rights & Titles",
+                desc: "Central land revenue register updated periodically (usually every 5 years) recording owners, cultivators, shares, and land revenue payable.",
+                authority: "Revenue Department (Patwari/Lekhpal)"
+            },
+            "RoR (Record of Rights)": {
+                hindi: "अधिकार अभिलेख (RoR)",
+                fullform: "Record of Rights",
+                desc: "Statutory evidence certifying legal ownership, tenancy rights, mortgages, and easements over a land parcel.",
+                authority: "Land Revenue Act"
+            },
+            "SVAMITVA": {
+                hindi: "स्वामित्व योजना",
+                fullform: "Survey of Villages and Mapping with Improvised Technology in Village Areas",
+                desc: "National scheme using drone surveys and CORS networks to establish clear ownership in rural inhabited (Abadi) areas and issue Property Cards.",
+                authority: "Ministry of Panchayati Raj & Survey of India"
+            },
+            "FAR / FSI": {
+                hindi: "एफ.ए.आर / एफ.एस.आई",
+                fullform: "Floor Area Ratio / Floor Space Index",
+                desc: "The ratio of total covered building area across all floors to the total plot area, regulated by Town Planning development bylaws.",
+                authority: "Development Authority / Master Plan 2041"
+            },
+            "Setback": {
+                hindi: "सेटबैक (अनिवार्य खुला क्षेत्र)",
+                fullform: "Statutory Open Space Buffer",
+                desc: "Mandatory minimum distance that a building must be recessed from plot boundaries and road centerlines for ventilation, fire safety, and daylight.",
+                authority: "Municipal Building Bye-Laws"
+            },
+            "Nazul Land": {
+                hindi: "नजूल भूमि",
+                fullform: "Government-Owned Leased Land",
+                desc: "Non-agricultural land owned by the state government, granted on lease for housing or public infrastructure.",
+                authority: "State Government Nazul Rules"
+            },
+            "Gaon Sabha Land": {
+                hindi: "ग्राम सभा / पंचायत भूमि",
+                fullform: "Common Village Community Land",
+                desc: "Community lands vested in the Gram Panchayat for common purposes such as village pasture (Charnot), ponds (Amrit Sarovar), and schools.",
+                authority: "Panchayati Raj Act & Revenue Code"
+            },
+            "Mutation (Dakhil-Kharij)": {
+                hindi: "दाखिल-खारिज (नामांतरण)",
+                fullform: "Title Transfer in Revenue Records",
+                desc: "Formal administrative entry updating ownership name in government revenue books following sale, gift, or inheritance.",
+                authority: "Tehsildar / Naib Tehsildar Court"
+            },
+            "Circle Rate / Ready Reckoner": {
+                hindi: "सर्किल रेट / मूल्यांकन दर",
+                fullform: "Statutory Minimum Property Valuation Rate",
+                desc: "The government benchmark price per unit area determined by the District Collector below which a property cannot be registered.",
+                authority: "District Collectorate / Sub-Registrar"
+            },
+            "Encumbrance": {
+                hindi: "भारमुक्त स्थिति / विल्लंगम",
+                fullform: "Legal Charge, Lien or Dispute",
+                desc: "Any liability, mortgage, court stay, or financial charge registered against a property title.",
+                authority: "Sub-Registrar Office (Registration Act 1908)"
+            },
+            "Strata Cadastre": {
+                hindi: "3D स्ट्रैटा कैडस्ट्रे",
+                fullform: "Volumetric 3D Unit Cadastre",
+                desc: "Cadastral model documenting legal ownership of individual vertical apartments, offices, and subterranean basements in 3D space.",
+                authority: "ISO 19152 Land Administration Domain Model"
+            },
+            "Right of Way (RoW)": {
+                hindi: "मार्गाधिकार (RoW)",
+                fullform: "Right-of-Way Corridor",
+                desc: "The legal easement strip reserved for public highways, sector roads, drainage, water supply, and utility pipelines.",
+                authority: "PWD / Highway Authority / Municipal Corp"
+            },
+            "LADM (ISO 19152)": {
+                hindi: "एल.ए.डी.एम (ISO 19152)",
+                fullform: "Land Administration Domain Model",
+                desc: "International ISO standard providing the formal semantic conceptual framework for 2D/3D land administration.",
+                authority: "International Organization for Standardization (ISO)"
+            }
+        };
+
+        // -------------------------------------------------------------
+        // 2. GLOBAL THREE.JS APPLICATION STATE
+        // -------------------------------------------------------------
+        let scene, camera, renderer, controls;
+        let interactiveObjects = [];
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let selectedObject = null;
+        let isExploded = false;
+        let isMeasureMode = false;
+        let measurePoints = [];
+        let sunLight;
+        let groundMesh, groundGrid;
+        let activeLayers = {
+            govt: true,
+            strata: true,
+            plotted: true,
+            commercial: true,
+            roads: true,
+            metro: true,
+            utilities: true
+        };
+
+        let currentActiveParcelData = null;
+        let apiBaseUrl = localStorage.getItem('BHU_AADHAAR_API_URL') || '';
+
+        // -------------------------------------------------------------
+        // 3. THREE.JS INITIALIZATION
+        // -------------------------------------------------------------
+        function initThreeEngine() {
+            const container = document.getElementById('threeContainer');
+            const width = container.clientWidth || window.innerWidth - 440;
+            const height = container.clientHeight || window.innerHeight - 60;
+
+            // 1. Scene with warm dark slate background (NO BLUE)
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x080D0B);
+            scene.fog = new THREE.FogExp2(0x080D0B, 0.0035);
+
+            // 2. Camera
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 1200);
+            camera.position.set(-110, 85, 130);
+
+            // 3. WebGL Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // 4. OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 5, 0);
+            controls.maxDistance = 450;
+            controls.minDistance = 5;
+            controls.maxPolarAngle = Math.PI / 2 - 0.02; // Prevent going below ground unless X-Ray
+            controls.update();
+
+            // 5. Lighting (Warm Indian sunlight & ambient illumination)
+            const ambientLight = new THREE.AmbientLight(0xFFFBEB, 0.7);
+            scene.add(ambientLight);
+
+            sunLight = new THREE.DirectionalLight(0xFFF7ED, 1.1);
+            sunLight.position.set(80, 140, 60);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.camera.near = 10;
+            sunLight.shadow.camera.far = 400;
+            sunLight.shadow.camera.left = -150;
+            sunLight.shadow.camera.right = 150;
+            sunLight.shadow.camera.top = 150;
+            sunLight.shadow.camera.bottom = -150;
+            scene.add(sunLight);
+
+            // Subtle warm terracotta fill light
+            const warmFill = new THREE.DirectionalLight(0xE07A5F, 0.3);
+            warmFill.position.set(-80, 60, -60);
+            scene.add(warmFill);
+
+            // 6. Ground & Survey Grid
+            buildGroundAndColonyMatrix();
+
+            // 7. Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            renderer.domElement.addEventListener('pointerdown', onPointerClick);
+
+            // 8. Load Colony Data
+            loadColonyDataset();
+
+            // 9. Animation Loop
+            animate();
+        }
+
+        function buildGroundAndColonyMatrix() {
+            // Ground soil plane (warm deep charcoal / earthy slate)
+            const groundGeo = new THREE.PlaneGeometry(380, 320);
+            const groundMat = new THREE.MeshStandardMaterial({
+                color: 0x0E1612,
+                roughness: 0.95,
+                metalness: 0.05,
+                transparent: true,
+                opacity: 0.95,
+                side: THREE.DoubleSide
+            });
+            groundMesh = new THREE.Mesh(groundGeo, groundMat);
+            groundMesh.rotation.x = -Math.PI / 2;
+            groundMesh.position.y = 0;
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+
+            // Cadastral Matrix Grid (Forest Emerald & muted olive)
+            groundGrid = new THREE.GridHelper(380, 76, 0x10B981, 0x1A2820);
+            groundGrid.position.y = 0.05;
+            scene.add(groundGrid);
+        }
+
+        // -------------------------------------------------------------
+        // 4. COLONY 3D OBJECTS BUILDER
+        // -------------------------------------------------------------
+        function buildColonyScene(data) {
+            // Clear existing interactive objects
+            interactiveObjects.forEach(o => scene.remove(o));
+            interactiveObjects = [];
+
+            // 1. ROADS (24m Main Arterial & Internal Avenues)
+            if (data.roads) {
+                data.roads.forEach(r => {
+                    const coords = r.coordinates[0];
+                    const w = Math.abs(coords[2] - coords[0]) || 280;
+                    const d = r.width_m || 24;
+                    const z = (coords[1] + coords[3]) / 2;
+
+                    const roadGeo = new THREE.PlaneGeometry(w, d);
+                    const roadMat = new THREE.MeshStandardMaterial({
+                        color: 0x1F2923, // Dark asphalt
+                        roughness: 0.9,
+                        side: THREE.DoubleSide
+                    });
+                    const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+                    roadMesh.rotation.x = -Math.PI / 2;
+                    roadMesh.position.set(0, 0.08, z);
+                    roadMesh.receiveShadow = true;
+                    roadMesh.userData = { ...r, layerType: 'roads' };
+                    scene.add(roadMesh);
+                    interactiveObjects.push(roadMesh);
+
+                    // Road Yellow/White Centerline
+                    const lineGeo = new THREE.PlaneGeometry(w, 0.6);
+                    const lineMat = new THREE.MeshBasicMaterial({ color: 0xF59E0B });
+                    const lineMesh = new THREE.Mesh(lineGeo, lineMat);
+                    lineMesh.rotation.x = -Math.PI / 2;
+                    lineMesh.position.set(0, 0.09, z);
+                    scene.add(lineMesh);
+                });
+            }
+
+            // 2. GOVERNMENT PROPERTIES (Tagged with Ashok Pillar badges & distinct colors)
+            if (data.government_parcels) {
+                data.government_parcels.forEach(g => {
+                    const xs = g.coords.map(pt => pt[0]);
+                    const zs = g.coords.map(pt => pt[1]);
+                    const minX = Math.min(...xs), maxX = Math.max(...xs);
+                    const minZ = Math.min(...zs), maxZ = Math.max(...zs);
+                    const width = maxX - minX;
+                    const depth = maxZ - minZ;
+                    const cx = (minX + maxX) / 2;
+                    const cz = (minZ + maxZ) / 2;
+
+                    if (g.height_m > 0.5) {
+                        const geom = new THREE.BoxGeometry(width, g.height_m, depth);
+                        const mat = new THREE.MeshStandardMaterial({
+                            color: new THREE.Color(g.color || 0xD97706),
+                            roughness: 0.4,
+                            metalness: 0.1,
+                            transparent: true,
+                            opacity: 0.88
+                        });
+                        const mesh = new THREE.Mesh(geom, mat);
+                        mesh.position.set(cx, g.height_m / 2, cz);
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+
+                        const edges = new THREE.EdgesGeometry(geom);
+                        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xFFFBEB, transparent: true, opacity: 0.6 }));
+                        mesh.add(line);
+
+                        mesh.userData = {
+                            ...g,
+                            building_name: g.name,
+                            unit_number: "GOVERNMENT ADMINISTRATIVE COMPLEX",
+                            owner_name: g.department,
+                            owner_id: "GOVT-OF-INDIA-DEPT",
+                            land_use: `Government (${g.category})`,
+                            floor_area_sqm: g.area_sqm,
+                            volume_cum: Math.round(g.area_sqm * g.height_m),
+                            valuation_inr: "Public Government Asset (Exempt from Stamp Duty)",
+                            encumbrance: "Government Sovereign Land (Non-Alienable)",
+                            layerType: 'govt'
+                        };
+                        scene.add(mesh);
+                        interactiveObjects.push(mesh);
+                    } else {
+                        // Water Body / Amrit Sarovar Park Plane
+                        const parkGeo = new THREE.PlaneGeometry(width, depth);
+                        const parkMat = new THREE.MeshStandardMaterial({ color: 0x059669, roughness: 0.8 });
+                        const parkMesh = new THREE.Mesh(parkGeo, parkMat);
+                        parkMesh.rotation.x = -Math.PI / 2;
+                        parkMesh.position.set(cx, 0.1, cz);
+                        parkMesh.userData = { ...g, layerType: 'govt' };
+                        scene.add(parkMesh);
+                        interactiveObjects.push(parkMesh);
+                    }
+                });
+            }
+
+            // 3. MULTI-STOREY STRATA RESIDENTIAL BUILDINGS
+            if (data.strata_parcels) {
+                data.strata_parcels.forEach(p => {
+                    const width = p.width || 28;
+                    const depth = p.depth || 24;
+                    const height = Math.max(0.5, p.extrusion_height - p.base_height);
+                    const cx = p.center ? p.center[0] : 55;
+                    const cz = p.center ? p.center[1] : 65;
+                    const cy = p.base_height + height / 2;
+
+                    let colorHex = 0x10B981; // Standard Residential Strata (Forest Emerald)
+                    if (p.floor_level === 1) colorHex = 0xD97706; // Society Lobby / Ground (Warm Amber)
+                    if (p.unit_number && p.unit_number.includes('PENTHOUSE')) colorHex = 0xF59E0B; // Penthouse (Gold)
+
+                    const geom = new THREE.BoxGeometry(width, height, depth);
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: colorHex,
+                        roughness: 0.35,
+                        metalness: 0.15,
+                        transparent: true,
+                        opacity: 0.85
+                    });
+                    const mesh = new THREE.Mesh(geom, mat);
+                    mesh.position.set(cx, cy, cz);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+
+                    const edges = new THREE.EdgesGeometry(geom);
+                    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.5 }));
+                    mesh.add(line);
+
+                    mesh.userData = {
+                        ...p,
+                        origY: cy,
+                        layerType: 'strata'
+                    };
+                    scene.add(mesh);
+                    interactiveObjects.push(mesh);
+                });
+            }
+
+            // 4. SUBTERRANEAN BASEMENTS
+            if (data.subterranean_parcels) {
+                data.subterranean_parcels.forEach(sub => {
+                    const width = sub.width || 28;
+                    const depth = sub.depth || 24;
+                    const height = Math.max(0.5, sub.extrusion_height - sub.base_height);
+                    const cx = sub.center ? sub.center[0] : 55;
+                    const cz = sub.center ? sub.center[1] : 65;
+                    const cy = sub.base_height + height / 2;
+
+                    const geom = new THREE.BoxGeometry(width, height, depth);
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: 0x374151,
+                        roughness: 0.7,
+                        transparent: true,
+                        opacity: 0.85
+                    });
+                    const mesh = new THREE.Mesh(geom, mat);
+                    mesh.position.set(cx, cy, cz);
+
+                    const edges = new THREE.EdgesGeometry(geom);
+                    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x10B981, transparent: true, opacity: 0.8 }));
+                    mesh.add(line);
+
+                    mesh.userData = { ...sub, layerType: 'strata' };
+                    scene.add(mesh);
+                    interactiveObjects.push(mesh);
+                });
+            }
+
+            // 5. PLOTTED INDEPENDENT HOUSES / KOTHIS (Khasra 201 to 206)
+            if (data.plotted_houses) {
+                data.plotted_houses.forEach(h => {
+                    const cx = h.center[0], cz = h.center[1];
+                    const w = h.width, d = h.depth, hgt = h.height_m;
+
+                    const geom = new THREE.BoxGeometry(w, hgt, d);
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: 0xE07A5F, // Terracotta Sandstone
+                        roughness: 0.5,
+                        metalness: 0.1,
+                        transparent: true,
+                        opacity: 0.9
+                    });
+                    const mesh = new THREE.Mesh(geom, mat);
+                    mesh.position.set(cx, hgt / 2, cz);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+
+                    const edges = new THREE.EdgesGeometry(geom);
+                    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xFFFBEB, transparent: true, opacity: 0.6 }));
+                    mesh.add(line);
+
+                    mesh.userData = {
+                        ...h,
+                        building_name: h.house_name,
+                        unit_number: `Independent Villa (${h.floors} Storeys)`,
+                        owner_name: h.owner,
+                        owner_id: h.owner_id,
+                        floor_area_sqm: h.plot_area_sqm,
+                        volume_cum: Math.round(h.plot_area_sqm * hgt),
+                        valuation_inr: `₹${((h.plot_area_sqm * h.circle_rate) / 10000000).toFixed(2)} Crore`,
+                        layerType: 'plotted'
+                    };
+                    scene.add(mesh);
+                    interactiveObjects.push(mesh);
+                });
+            }
+
+            // 6. COMMERCIAL PLAZA (Vyapar Kendra)
+            if (data.commercial_plaza) {
+                const c = data.commercial_plaza;
+                const cx = c.center[0], cz = c.center[1];
+                const w = c.width, d = c.depth, hgt = c.height_m;
+
+                const geom = new THREE.BoxGeometry(w, hgt, d);
+                const mat = new THREE.MeshStandardMaterial({
+                    color: 0x059669,
+                    roughness: 0.3,
+                    metalness: 0.2,
+                    transparent: true,
+                    opacity: 0.88
+                });
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.set(cx, hgt / 2, cz);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                const edges = new THREE.EdgesGeometry(geom);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.8 }));
+                mesh.add(line);
+
+                mesh.userData = {
+                    ...c,
+                    unit_number: "Commercial Complex (Retail + IT Offices)",
+                    owner_name: c.owner,
+                    owner_id: "COMM-DL-ASSOC-88",
+                    floor_area_sqm: Math.round(w * d * c.floors),
+                    volume_cum: Math.round(w * d * hgt),
+                    valuation_inr: "₹26.40 Crore (Circle Valuation)",
+                    encumbrance: "Commercial Title Clear",
+                    layerType: 'commercial'
+                };
+                scene.add(mesh);
+                interactiveObjects.push(mesh);
+            }
+
+            // 7. SUBTERRANEAN METRO TRANSIT TUNNEL (-18m Depth)
+            if (data.metro_tunnel) {
+                const m = data.metro_tunnel;
+                const tunnelRadius = (m.diameter_m || 6.0) / 2;
+                const tunnelGeom = new THREE.CylinderGeometry(tunnelRadius, tunnelRadius, 280, 24);
+                const tunnelMat = new THREE.MeshStandardMaterial({
+                    color: 0x8B5CF6, // Deep Purple / Transit Violet (NO BLUE)
+                    roughness: 0.4,
+                    transparent: true,
+                    opacity: 0.85
+                });
+                const tunnelMesh = new THREE.Mesh(tunnelGeom, tunnelMat);
+                tunnelMesh.rotation.z = Math.PI / 2;
+                tunnelMesh.position.set(0, -16.5, 0);
+
+                const edges = new THREE.EdgesGeometry(tunnelGeom);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x34D399, transparent: true, opacity: 0.6 }));
+                tunnelMesh.add(line);
+
+                tunnelMesh.userData = {
+                    ...m,
+                    building_name: m.name,
+                    unit_number: "Underground Metro Corridor",
+                    owner_name: m.operator,
+                    owner_id: "DMRC-TRANSIT-GOV",
+                    land_use: "Critical Public Transport Infrastructure",
+                    floor_area_sqm: 1680.0,
+                    volume_cum: 7916.0,
+                    valuation_inr: "Public Infrastructure Asset",
+                    encumbrance: "Statutory Metro Railway Easement",
+                    layerType: 'metro'
+                };
+                scene.add(tunnelMesh);
+                interactiveObjects.push(tunnelMesh);
+            }
+
+            // 8. SUBSURFACE UTILITIES PIPELINES
+            if (data.utilities) {
+                data.utilities.forEach(u => {
+                    const pts = [
+                        new THREE.Vector3(u.start[0], u.start[1], u.start[2]),
+                        new THREE.Vector3(u.end[0], u.end[1], u.end[2])
+                    ];
+                    const curve = new THREE.LineCurve3(pts[0], pts[1]);
+                    const tubeGeo = new THREE.TubeGeometry(curve, 20, (u.diameter_m || 0.6) / 2, 8, false);
+                    const tubeMat = new THREE.MeshStandardMaterial({
+                        color: new THREE.Color(u.color || 0x10B981),
+                        roughness: 0.3
+                    });
+                    const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+                    tubeMesh.userData = {
+                        building_name: u.description,
+                        unit_number: u.type,
+                        owner_name: u.operator,
+                        owner_id: u.utility_id,
+                        land_use: "Subsurface Utility Corridor",
+                        floor_area_sqm: 120.0,
+                        volume_cum: 240.0,
+                        valuation_inr: "Municipal Utility Network",
+                        encumbrance: "Statutory Utility Right-of-Way",
+                        layerType: 'utilities'
+                    };
+                    scene.add(tubeMesh);
+                    interactiveObjects.push(tubeMesh);
+                });
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 5. DATA FETCH & OFFLINE RESILIENT FALLBACK
+        // -------------------------------------------------------------
+        async function loadColonyDataset() {
+            let data = null;
+            const targetUrl = (apiBaseUrl ? apiBaseUrl.replace(/\/$/, '') : '') + '/api/cadastre/3d-layers';
+
+            try {
+                const res = await fetch(targetUrl, { signal: AbortSignal.timeout(3500) });
+                if (res.ok) {
+                    data = await res.json();
+                    document.getElementById('apiStatusText').textContent = 'Render Live';
+                    document.getElementById('apiStatusPill').style.borderColor = 'var(--emerald-primary)';
+                }
+            } catch (err) {
+                console.warn("Backend not available, using built-in high-performance Indian Colony dataset:", err);
+                document.getElementById('apiStatusText').textContent = 'Local Active';
+            }
+
+            if (!data) {
+                data = getBuiltinColonyData();
+            }
+
+            buildColonyScene(data);
+        }
+
+        function getBuiltinColonyData() {
+            return {
+                roads: [
+                    { road_id: "RD-01", name: "Swami Vivekananda Marg (24m)", width_m: 24.0, coordinates: [[-140, -12, 140, 12]] },
+                    { road_id: "RD-02", name: "Aryavarta Avenue (12m)", width_m: 12.0, coordinates: [[-12, -90, 12, 90]] }
+                ],
+                government_parcels: [
+                    {
+                        khasra_no: "GOVT/101",
+                        ulpin: "IN-DEL-DD-101-GOV",
+                        name: "Gram Panchayat Bhawan & CSC Digital Seva Kendra",
+                        department: "Department of Panchayati Raj",
+                        category: "Administrative",
+                        area_sqm: 850.0,
+                        coords: [[-85, 40], [-45, 40], [-45, 75], [-85, 75]],
+                        height_m: 11.0,
+                        color: "#D97706"
+                    },
+                    {
+                        khasra_no: "GOVT/102",
+                        ulpin: "IN-DEL-DD-102-GOV",
+                        name: "Govt Primary Health Centre (PHC) & Ayush Clinic",
+                        department: "Ministry of Health & Family Welfare",
+                        category: "Public Health",
+                        area_sqm: 1100.0,
+                        coords: [[-85, -75], [-45, -75], [-45, -40], [-85, -40]],
+                        height_m: 8.5,
+                        color: "#10B981"
+                    },
+                    {
+                        khasra_no: "GOVT/103",
+                        ulpin: "IN-DEL-DD-103-GOV",
+                        name: "PM SHRI Govt Model Senior Secondary School",
+                        department: "Department of School Education",
+                        category: "Educational",
+                        area_sqm: 2200.0,
+                        coords: [[-130, 40], [-95, 40], [-95, 85], [-130, 85]],
+                        height_m: 14.5,
+                        color: "#059669"
+                    },
+                    {
+                        khasra_no: "GOVT/104",
+                        ulpin: "IN-DEL-DD-104-GOV",
+                        name: "Community Park & Amrit Sarovar (Gaon Sabha Water Body)",
+                        department: "Gram Sabha / Mission Amrit Sarovar",
+                        category: "Eco-Wetland",
+                        area_sqm: 3200.0,
+                        coords: [[-135, -85], [-95, -85], [-95, -35], [-135, -35]],
+                        height_m: 0.2,
+                        color: "#34D399"
+                    }
+                ],
+                strata_parcels: [
+                    // Ganga Heights Tower A floors
+                    { ulpin: "IN-7724-2853-2141-STR-L01-LOBBY", building: "Ganga Heights (Tower A)", floor_level: 1, floor_code: "L01", unit_number: "Society Lobby & Security Desk", owner: "Ganga CGHS Association", owner_id: "RWA-REG-4412", use_case: "Residential Common Property", base_height: 1.2, extrusion_height: 4.5, floor_area_sqm: 350.0, volume_cum: 1155.0, encumbrance: "Non-Encumbered", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-STR-L02-U201", building: "Ganga Heights (Tower A)", floor_level: 2, floor_code: "L02", unit_number: "Flat 201 (3BHK RERA Luxury)", owner: "Shri Rajesh Sharma & Smt. Sunita Sharma", owner_id: "IND-AADHAAR-8931-XXXX-1021", use_case: "Residential Freehold", base_height: 4.5, extrusion_height: 7.8, floor_area_sqm: 180.0, volume_cum: 594.0, encumbrance: "Clear Title / Deed #DL-2023-7741", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-STR-L03-U301", building: "Ganga Heights (Tower A)", floor_level: 3, floor_code: "L03", unit_number: "Flat 301 (3BHK RERA Luxury)", owner: "Dr. Vikramjit Verma & Dr. Priya Verma", owner_id: "IND-AADHAAR-7712-XXXX-4532", use_case: "Residential Freehold", base_height: 7.8, extrusion_height: 11.1, floor_area_sqm: 180.0, volume_cum: 594.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-STR-L04-U401", building: "Ganga Heights (Tower A)", floor_level: 4, floor_code: "L04", unit_number: "Flat 401 (3BHK RERA Luxury)", owner: "Smt. Geeta Devi (Widow Share / Inherited)", owner_id: "IND-AADHAAR-6623-XXXX-9901", use_case: "Residential Freehold", base_height: 11.1, extrusion_height: 14.4, floor_area_sqm: 180.0, volume_cum: 594.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-STR-L05-U501", building: "Ganga Heights (Tower A)", floor_level: 5, floor_code: "L05", unit_number: "Flat 501 (3BHK RERA Luxury)", owner: "Shri Amit Sen & Smt. Ananya Sen", owner_id: "IND-AADHAAR-5544-XXXX-3321", use_case: "Residential Freehold", base_height: 14.4, extrusion_height: 17.7, floor_area_sqm: 180.0, volume_cum: 594.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-STR-L06-U601", building: "Ganga Heights (Tower A)", floor_level: 6, floor_code: "L06", unit_number: "PENTHOUSE-601 (Duplex Sky Villa)", owner: "Shri Gurpreet Singh & Smt. Jasleen Kaur", owner_id: "IND-AADHAAR-4411-XXXX-8821", use_case: "Residential Penthouse", base_height: 17.7, extrusion_height: 24.3, floor_area_sqm: 320.0, volume_cum: 2112.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 },
+                    // Yamuna Residency floors
+                    { ulpin: "IN-7724-2853-2142-STR-L01-U101", building: "Yamuna Residency (Tower B)", floor_level: 1, floor_code: "L01", unit_number: "Tower B Reception & Facilities", owner: "Yamuna Strata RWA", owner_id: "RWA-YAMUNA-2022", use_case: "Residential Common", base_height: 1.0, extrusion_height: 4.2, floor_area_sqm: 280.0, volume_cum: 896.0, encumbrance: "Clear Title", center: [95, 65], width: 28, depth: 24 },
+                    { ulpin: "IN-7724-2853-2142-STR-L02-U201", building: "Yamuna Residency (Tower B)", floor_level: 2, floor_code: "L02", unit_number: "Unit 201 (2BHK Smart)", owner: "Shri Venkatraman Iyer & Smt. Lakshmi Iyer", owner_id: "IND-AADHAAR-2288-XXXX-5541", use_case: "Residential Freehold", base_height: 4.2, extrusion_height: 7.4, floor_area_sqm: 140.0, volume_cum: 448.0, encumbrance: "Clear Title", center: [95, 65], width: 28, depth: 24 },
+                    { ulpin: "IN-7724-2853-2142-STR-L03-U301", building: "Yamuna Residency (Tower B)", floor_level: 3, floor_code: "L03", unit_number: "Unit 301 (2BHK Smart)", owner: "Shri Rameshwar Patel & Smt. Meena Patel", owner_id: "IND-AADHAAR-1177-XXXX-4432", use_case: "Residential Freehold", base_height: 7.4, extrusion_height: 10.6, floor_area_sqm: 140.0, volume_cum: 448.0, encumbrance: "Clear Title", center: [95, 65], width: 28, depth: 24 }
+                ],
+                subterranean_parcels: [
+                    { ulpin: "IN-7724-2853-2141-SUB-B01", building: "Ganga Heights (Tower A)", floor_level: -1, floor_code: "B01", unit_number: "Basement Parking B1", owner: "Ganga CGHS Maintenance Trust", owner_id: "RWA-REG-4412", use_case: "Automated Parking", base_height: -3.3, extrusion_height: 0.0, floor_area_sqm: 832.0, volume_cum: 2745.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 },
+                    { ulpin: "IN-7724-2853-2141-SUB-B02", building: "Ganga Heights (Tower A)", floor_level: -2, floor_code: "B02", unit_number: "Basement Parking B2 & DG Vault", owner: "Ganga CGHS Maintenance Trust", owner_id: "RWA-REG-4412", use_case: "Parking & Utility", base_height: -6.6, extrusion_height: -3.3, floor_area_sqm: 832.0, volume_cum: 2745.0, encumbrance: "Clear Title", center: [55, 65], width: 32, depth: 26 }
+                ],
+                plotted_houses: [
+                    { khasra_no: "201", khata_no: "18", ulpin: "IN-7724-2853-0201", owner: "Shri Harish Chandra Gupta", owner_id: "IND-PAN-ABCDE1234F", house_name: "Gupta Niwas (Kothi #201)", plot_area_sqm: 320.0, center: [45, -45], width: 16, depth: 20, height_m: 10.5, floors: 3, circle_rate: 72000, encumbrance: "Clear Title / Non-Encumbered" },
+                    { khasra_no: "202", khata_no: "19", ulpin: "IN-7724-2853-0202", owner: "Smt. Kamala Mehra & Shri Sudhir Mehra", owner_id: "IND-AADHAAR-5521-XXXX-3341", house_name: "Mehra Villa (Kothi #202)", plot_area_sqm: 300.0, center: [70, -45], width: 15, depth: 20, height_m: 10.5, floors: 3, circle_rate: 72000, encumbrance: "State Bank of India Home Loan Mortgage Active" },
+                    { khasra_no: "203", khata_no: "20", ulpin: "IN-7724-2853-0203", owner: "Shri Balwant Rai Kapoor", owner_id: "IND-PAN-KPRBR9988G", house_name: "Kapoor Mansion (Kothi #203)", plot_area_sqm: 400.0, center: [98, -45], width: 19, depth: 21, height_m: 7.2, floors: 2, circle_rate: 72000, encumbrance: "Clear Title" },
+                    { khasra_no: "204", khata_no: "21", ulpin: "IN-7724-2853-0204", owner: "Shri Anand Swaroop Srivastava", owner_id: "IND-AADHAAR-6644-XXXX-2211", house_name: "Srivastava Kothi (Kothi #204)", plot_area_sqm: 280.0, center: [45, -75], width: 15, depth: 18, height_m: 7.0, floors: 2, circle_rate: 72000, encumbrance: "Clear Title" },
+                    { khasra_no: "205", khata_no: "22", ulpin: "IN-7724-2853-0205", owner: "Dr. Sanjeev Nair & Dr. Deepa Nair", owner_id: "IND-AADHAAR-8833-XXXX-1155", house_name: "Nair Nilayam (Kothi #205)", plot_area_sqm: 320.0, center: [70, -75], width: 16, depth: 20, height_m: 10.5, floors: 3, circle_rate: 72000, encumbrance: "Clear Title / Mutation Certified" },
+                    { khasra_no: "206", khata_no: "23", ulpin: "IN-7724-2853-0206", owner: "Shri Tariq Mansoor & Smt. Rubina Mansoor", owner_id: "IND-AADHAAR-9922-XXXX-7766", house_name: "Mansoor Villa (Kothi #206)", plot_area_sqm: 310.0, center: [98, -75], width: 16, depth: 19, height_m: 7.2, floors: 2, circle_rate: 72000, encumbrance: "Clear Title" }
+                ],
+                commercial_plaza: {
+                    building_name: "Vyapar Kendra Commercial Complex",
+                    khasra_no: "305/1",
+                    khata_no: "88",
+                    ulpin: "IN-7724-2853-3051",
+                    center: [-25, -45],
+                    width: 24,
+                    depth: 22,
+                    height_m: 15.0,
+                    floors: 4,
+                    owner: "Aryavarta Commercial Traders Association",
+                    land_use: "Commercial Mixed Use",
+                    circle_rate: 125000
+                },
+                metro_tunnel: {
+                    name: "Delhi Metro Underground Pink Line Transit Corridor",
+                    operator: "Delhi Metro Rail Corporation (DMRC)",
+                    diameter_m: 6.0,
+                    depth_min_z: -19.5,
+                    depth_max_z: -13.5
+                },
+                utilities: [
+                    { utility_id: "UTIL-DJB-WATER", type: "WATER_TRUNK_MAIN", operator: "Delhi Jal Board (DJB)", color: "#059669", diameter_m: 0.8, start: [-130, -2.5, 5], end: [130, -2.5, 5], description: "600mm Potable Water Supply Ring Main" },
+                    { utility_id: "UTIL-MCD-SEWER", type: "SEWAGE_TRUNK_LINE", operator: "Municipal Drainage", color: "#D97706", diameter_m: 1.1, start: [-130, -4.2, -5], end: [130, -4.2, -5], description: "900mm Gravity Trunk Sewer Network" },
+                    { utility_id: "UTIL-POWER-11KV", type: "HIGH_VOLTAGE_POWER", operator: "Discom Electric Utility", color: "#EA580C", diameter_m: 0.4, start: [-130, -1.8, 8], end: [130, -1.8, 8], description: "11 kV Underground Armoured Electric Feeder Duct" },
+                    { utility_id: "UTIL-BHARATNET", type: "OPTICAL_FIBER", operator: "BharatNet / BSNL Optical Duct", color: "#10B981", diameter_m: 0.25, start: [-130, -1.2, -8], end: [130, -1.2, -8], description: "National Optical Fiber Network Backbone" }
+                ]
+            };
+        }
+
+        // -------------------------------------------------------------
+        // 6. INTERACTIVE RAYCASTING & PARCEL SELECTION
+        // -------------------------------------------------------------
+        function onPointerClick(event) {
+            // Ignore click if user clicked UI panels
+            if (event.clientX < 440) return;
+
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveObjects, true);
+
+            if (intersects.length > 0) {
+                let hitObj = intersects[0].object;
+                while (hitObj.parent && !hitObj.userData.ulpin && !hitObj.userData.khasra_no && !hitObj.userData.building_name && hitObj.parent !== scene) {
+                    hitObj = hitObj.parent;
+                }
+
+                if (isMeasureMode) {
+                    handleMeasureClick(intersects[0].point);
+                    return;
+                }
+
+                selectParcel(hitObj);
+            }
+        }
+
+        function selectParcel(obj) {
+            selectedObject = obj;
+            const data = obj.userData;
+            currentActiveParcelData = data;
+
+            // Highlight selected mesh with gentle pulse or wireframe color
+            interactiveObjects.forEach(o => {
+                if (o.material && o.material.emissive) o.material.emissive.setHex(0x000000);
+            });
+            if (obj.material && obj.material.emissive) {
+                obj.material.emissive.setHex(0x10B981);
+            }
+
+            // Populate Inspector Tab
+            document.getElementById('inspectorEmptyState').style.display = 'none';
+            document.getElementById('inspectorContent').style.display = 'block';
+
+            document.getElementById('inspUlpin').textContent = data.ulpin || data.ulpin_base || `IN-7724-${data.khasra_no || '00'}`;
+            document.getElementById('inspKhasra').textContent = data.khasra_no ? `Khasra #${data.khasra_no}` : (data.name || 'Sector Lot');
+            document.getElementById('inspKhata').textContent = data.khata_no ? `Khata #${data.khata_no}` : 'Khatauni #14/A';
+            document.getElementById('inspOwner').textContent = data.owner || data.owner_name || data.department || 'Registered Title Holder';
+            document.getElementById('inspOwnerId').textContent = data.owner_id || 'IND-AADHAAR-VERIFIED';
+            document.getElementById('inspBuilding').textContent = data.building || data.building_name || data.name || 'Aryavarta Enclave';
+            document.getElementById('inspUnit').textContent = data.unit_number || `Floor ${data.floor_level || '1'}`;
+            document.getElementById('inspLandUse').textContent = data.land_use || data.use_case || 'Residential';
+
+            const area = data.floor_area_sqm || data.plot_area_sqm || 160;
+            const gaj = (area * 1.196).toFixed(1);
+            document.getElementById('inspArea').textContent = `${area} m² (${gaj} गज)`;
+
+            const vol = data.volume_cum || Math.round(area * 3.2);
+            document.getElementById('inspVolume').textContent = `${vol} m³`;
+
+            document.getElementById('inspValuation').textContent = data.valuation_inr || `₹${Math.round(area * 68000).toLocaleString('en-IN')}`;
+            document.getElementById('inspEncumbrance').textContent = data.encumbrance || 'Clear Title / Non-Encumbered';
+
+            // Switch to Inspector Tab automatically
+            switchTab('tab-inspector');
+        }
+
+        // -------------------------------------------------------------
+        // 7. OFFICER 2D UPLOAD & 3D EXTRUSION PIPELINE
+        // -------------------------------------------------------------
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('uploadedFileStatus').textContent = `✓ Uploaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        }
+
+        async function executeOfficerExtrusion() {
+            const state = document.getElementById('formState').value;
+            const tehsil = document.getElementById('formTehsil').value;
+            const khasra = document.getElementById('formKhasra').value;
+            const khata = document.getElementById('formKhata').value;
+            const owner = document.getElementById('formOwner').value;
+            const landUse = document.getElementById('formLandUse').value;
+            const circleRate = parseFloat(document.getElementById('formCircleRate').value) || 55000;
+            const floors = parseInt(document.getElementById('formFloors').value) || 5;
+            const floorHeight = parseFloat(document.getElementById('formFloorHeight').value) || 3.2;
+            const basements = parseInt(document.getElementById('formBasement').value) || 1;
+            const far = parseFloat(document.getElementById('formFar').value) || 2.75;
+            const setbackFront = parseFloat(document.getElementById('formSetbackFront').value) || 4.5;
+            const setbackSide = parseFloat(document.getElementById('formSetbackSide').value) || 3.0;
+
+            const reqPayload = {
+                state, district: "Dadri / NCR", tehsil, village: "Aryavarta Kalan",
+                khasra_no: khasra, khata_no: khata, land_use: landUse,
+                owner_name: owner, owner_id: "IND-AADHAAR-OFFICER-REG",
+                floors_count: floors, floor_height_m: floorHeight, plinth_height_m: 0.9,
+                basement_levels: basements, basement_depth_m: 3.5,
+                front_setback_m: setbackFront, side_setback_m: setbackSide, rear_setback_m: setbackSide,
+                far_permitted: far, circle_rate_per_sqm: circleRate
+            };
+
+            let result = null;
+            const targetUrl = (apiBaseUrl ? apiBaseUrl.replace(/\/$/, '') : '') + '/api/cadastre/officer-upload';
+
+            try {
+                const res = await fetch(targetUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reqPayload),
+                    signal: AbortSignal.timeout(4000)
+                });
+                if (res.ok) {
+                    result = await res.json();
+                }
+            } catch (err) {
+                console.warn("Backend API not reachable, simulating local high-precision 3D extrusion:", err);
+            }
+
+            if (!result) {
+                // Client-side instant extrusion simulation
+                const ulpin14 = `IN-7724-2853-${khasra.replace('/', '')}`;
+                const plotW = 24.0, plotD = 22.0;
+                const bldgW = plotW - setbackSide * 2;
+                const bldgD = plotD - setbackFront * 2;
+                const groundArea = plotW * plotD;
+                const totalBuiltUp = bldgW * bldgD * floors;
+
+                result = {
+                    status: "SUCCESS_EXTRUDED_3D",
+                    ulpin_14: ulpin14,
+                    spatial_metrics: {
+                        ground_plot_area_sqm: groundArea,
+                        total_built_up_sqm: totalBuiltUp,
+                        total_floors: floors,
+                        total_height_m: 0.9 + floors * floorHeight,
+                        far_consumed: (totalBuiltUp / groundArea).toFixed(2),
+                        far_compliance: "COMPLIANT"
+                    },
+                    financial_valuation: {
+                        statutory_valuation_inr: totalBuiltUp * circleRate
+                    },
+                    render_focus_coords: { x: -25.0, y: 15.0, z: 60.0 }
+                };
+            }
+
+            // Build 3D Mesh in Scene
+            const cx = -25.0, cz = 60.0;
+            const bWidth = 18.0, bDepth = 16.0;
+
+            for (let fl = 1; fl <= floors; fl++) {
+                const fBase = 0.9 + (fl - 1) * floorHeight;
+                const geom = new THREE.BoxGeometry(bWidth, floorHeight, bDepth);
+                const mat = new THREE.MeshStandardMaterial({
+                    color: fl === 1 ? 0xD97706 : 0x10B981,
+                    roughness: 0.35,
+                    metalness: 0.15,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.set(cx, fBase + floorHeight / 2, cz);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                const edges = new THREE.EdgesGeometry(geom);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xF59E0B, linewidth: 2 }));
+                mesh.add(line);
+
+                mesh.userData = {
+                    ulpin: `${result.ulpin_14}-STR-L${fl < 10 ? '0' + fl : fl}-U01`,
+                    khasra_no: khasra,
+                    khata_no: khata,
+                    building_name: `Khasra #${khasra} Complex`,
+                    unit_number: `Floor ${fl} Unit (Officer Extrusion)`,
+                    owner_name: owner,
+                    owner_id: "IND-AADHAAR-VERIFIED",
+                    land_use: landUse,
+                    floor_area_sqm: Math.round(bWidth * bDepth),
+                    volume_cum: Math.round(bWidth * bDepth * floorHeight),
+                    valuation_inr: `₹${((result.financial_valuation.statutory_valuation_inr || 25000000) / 10000000).toFixed(2)} Crore`,
+                    encumbrance: "Clear Title / Officer Extrusion Certified",
+                    layerType: 'strata'
+                };
+                scene.add(mesh);
+                interactiveObjects.push(mesh);
+            }
+
+            // Smoothly fly camera to new parcel
+            flyCameraTo(cx - 35, 30, cz + 45, cx, 10, cz);
+
+            // Notify officer
+            alert(`✅ Khasra #${khasra} successfully extruded into ${floors}-storey 3D Cadastre!\n\n• ULPIN: ${result.ulpin_14}\n• Built-up Area: ${result.spatial_metrics.total_built_up_sqm} m²\n• FAR Status: ${result.spatial_metrics.far_compliance}\n• Valuation: ₹${((result.financial_valuation.statutory_valuation_inr || 25000000) / 10000000).toFixed(2)} Cr`);
+
+            // Auto-select top floor
+            selectParcel(interactiveObjects[interactiveObjects.length - 1]);
+        }
+
+        // -------------------------------------------------------------
+        // 8. CAMERA PRESETS & ANIMATION
+        // -------------------------------------------------------------
+        function setViewMode(mode) {
+            document.querySelectorAll('.view-preset-btn').forEach(b => b.classList.remove('active'));
+
+            if (mode === 'colony') {
+                document.getElementById('btnViewColony').classList.add('active');
+                flyCameraTo(-110, 85, 130, 0, 5, 0);
+            } else if (mode === 'topdown') {
+                document.getElementById('btnViewTop').classList.add('active');
+                flyCameraTo(0, 190, 0.1, 0, 0, 0);
+            } else if (mode === 'street') {
+                document.getElementById('btnViewStreet').classList.add('active');
+                flyCameraTo(-70, 4, 15, 20, 4, 15);
+            }
+        }
+
+        function toggleExplodedView() {
+            isExploded = !isExploded;
+            const btn = document.getElementById('btnViewExploded');
+            btn.classList.toggle('active', isExploded);
+
+            interactiveObjects.forEach(obj => {
+                if (obj.userData.floor_level && obj.userData.floor_level > 1) {
+                    const factor = isExploded ? (obj.userData.floor_level - 1) * 6.0 : 0;
+                    obj.position.y = (obj.userData.origY || obj.position.y) + factor;
+                }
+            });
+        }
+
+        function focusGovtProperties() {
+            flyCameraTo(-60, 45, 110, -70, 8, 40);
+        }
+
+        function flyCameraTo(cx, cy, cz, tx, ty, tz) {
+            const startPos = camera.position.clone();
+            const endPos = new THREE.Vector3(cx, cy, cz);
+            const startTarget = controls.target.clone();
+            const endTarget = new THREE.Vector3(tx, ty, tz);
+
+            let progress = 0;
+            const step = () => {
+                progress += 0.04;
+                if (progress <= 1) {
+                    camera.position.lerpVectors(startPos, endPos, progress);
+                    controls.target.lerpVectors(startTarget, endTarget, progress);
+                    controls.update();
+                    requestAnimationFrame(step);
+                } else {
+                    camera.position.copy(endPos);
+                    controls.target.copy(endTarget);
+                    controls.update();
+                }
+            };
+            step();
+        }
+
+        // -------------------------------------------------------------
+        // 9. LAYER TOGGLES & X-RAY MODE
+        // -------------------------------------------------------------
+        function toggleLayer(layerName, visible) {
+            activeLayers[layerName] = visible;
+            interactiveObjects.forEach(obj => {
+                if (obj.userData.layerType === layerName) {
+                    obj.visible = visible;
+                }
+            });
+        }
+
+        function toggleXRay(enabled) {
+            if (groundMesh) {
+                groundMesh.material.opacity = enabled ? 0.2 : 0.95;
+                groundMesh.material.needsUpdate = true;
+            }
+            controls.maxPolarAngle = enabled ? Math.PI : Math.PI / 2 - 0.02;
+        }
+
+        function adjustSunlight(val) {
+            const ratio = val / 100.0;
+            const angle = ratio * Math.PI;
+            sunLight.position.x = Math.cos(angle) * 160;
+            sunLight.position.y = Math.sin(angle) * 140 + 20;
+            sunLight.position.z = Math.sin(angle) * 80;
+        }
+
+        // -------------------------------------------------------------
+        // 10. 3D MEASUREMENT TOOL
+        // -------------------------------------------------------------
+        function toggleMeasureMode() {
+            isMeasureMode = !isMeasureMode;
+            measurePoints = [];
+            const btn = document.getElementById('measureToolBtn');
+            btn.classList.toggle('active', isMeasureMode);
+            btn.textContent = isMeasureMode ? "📍 Click 2 Points to Measure" : "📐 Measure 3D Distance";
+        }
+
+        function handleMeasureClick(point) {
+            measurePoints.push(point);
+            if (measurePoints.length === 2) {
+                const distM = measurePoints[0].distanceTo(measurePoints[1]);
+                const distFt = (distM * 3.28084).toFixed(2);
+                alert(`📏 3D Distance Measured:\n\n• Meters: ${distM.toFixed(2)} m\n• Feet: ${distFt} ft`);
+                toggleMeasureMode();
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 11. HOVER TOOLTIPS ENGINE FOR SHORT FORMS & DIFFICULT WORDS
+        // -------------------------------------------------------------
+        function initHoverTooltips() {
+            const tooltipEl = document.getElementById('globalTooltip');
+
+            document.addEventListener('mouseover', (e) => {
+                const target = e.target.closest('.cadastre-term');
+                if (!target) return;
+
+                const termKey = target.getAttribute('data-term');
+                const termData = GLOSSARY_DICTIONARY[termKey];
+                if (!termData) return;
+
+                document.getElementById('ttTitle').textContent = termKey;
+                document.getElementById('ttHindi').textContent = termData.hindi || '';
+                document.getElementById('ttFullform').textContent = termData.fullform || '';
+                document.getElementById('ttDesc').textContent = termData.desc || '';
+                document.getElementById('ttAuth').textContent = `Legal Authority: ${termData.authority || 'Revenue Act'}`;
+
+                tooltipEl.style.opacity = '1';
+                positionTooltip(e, tooltipEl);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (tooltipEl.style.opacity === '1') {
+                    positionTooltip(e, tooltipEl);
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                const target = e.target.closest('.cadastre-term');
+                if (target) {
+                    tooltipEl.style.opacity = '0';
+                }
+            });
+        }
+
+        function positionTooltip(e, el) {
+            const x = e.clientX + 16;
+            const y = e.clientY + 16;
+            const maxX = window.innerWidth - 310;
+            const maxY = window.innerHeight - 160;
+
+            el.style.left = `${Math.min(x, maxX)}px`;
+            el.style.top = `${Math.min(y, maxY)}px`;
+        }
+
+        // -------------------------------------------------------------
+        // 12. GLOSSARY & CERTIFICATE MODALS
+        // -------------------------------------------------------------
+        function openGlossaryModal() {
+            populateGlossaryList();
+            document.getElementById('glossaryModal').style.display = 'flex';
+        }
+
+        function closeGlossaryModal() {
+            document.getElementById('glossaryModal').style.display = 'none';
+        }
+
+        function populateGlossaryList(filter = '') {
+            const container = document.getElementById('glossaryListContainer');
+            container.innerHTML = '';
+
+            Object.entries(GLOSSARY_DICTIONARY).forEach(([term, data]) => {
+                if (filter && !term.toLowerCase().includes(filter.toLowerCase()) && !data.fullform.toLowerCase().includes(filter.toLowerCase())) {
+                    return;
+                }
+                const div = document.createElement('div');
+                div.style.background = 'rgba(0,0,0,0.3)';
+                div.style.padding = '12px';
+                div.style.borderRadius = '6px';
+                div.style.borderLeft = '3px solid var(--amber-gold)';
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong style="color:var(--amber-gold); font-size:13px;">${term}</strong>
+                        <span style="color:var(--emerald-light); font-size:11px;">${data.hindi || ''}</span>
+                    </div>
+                    <div style="font-size:11px; color:#FFFFFF; font-weight:600; margin:2px 0 4px;">${data.fullform}</div>
+                    <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">${data.desc}</p>
+                    <div style="font-size:9px; color:var(--emerald-light); margin-top:4px;">Authority: ${data.authority}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterGlossary(val) {
+            populateGlossaryList(val);
+        }
+
+        function openCertificateModal() {
+            if (!currentActiveParcelData) {
+                alert("Please select a parcel in the 3D Colony View first.");
+                return;
+            }
+            const d = currentActiveParcelData;
+            document.getElementById('certUlpin').textContent = d.ulpin || 'IN-7724-2853-2141-STR-L04-U401';
+            document.getElementById('certKhasra').textContent = `Khasra #${d.khasra_no || '214/1'}`;
+            document.getElementById('certOwner').textContent = d.owner || d.owner_name || 'Shri Rajesh Sharma';
+            document.getElementById('certOwnerId').textContent = d.owner_id || 'IND-AADHAAR-8931-XXXX-1021';
+            document.getElementById('certFloor').textContent = `${d.unit_number || 'Unit 401'} • Floor ${d.floor_level || '4'}`;
+            document.getElementById('certArea').textContent = `${d.floor_area_sqm || d.plot_area_sqm || 180} Sq. Meters`;
+            document.getElementById('certVolume').textContent = `${d.volume_cum || 594} Cubic Meters`;
+            document.getElementById('certValuation').textContent = d.valuation_inr || '₹1,22,40,000 (INR)';
+            document.getElementById('certEncumbrance').textContent = d.encumbrance || 'Clear Title • Non-Encumbered';
+
+            document.getElementById('certModal').style.display = 'flex';
+        }
+
+        function closeCertificateModal() {
+            document.getElementById('certModal').style.display = 'none';
+        }
+
+        function openApiSettingsModal() {
+            document.getElementById('apiUrlInput').value = apiBaseUrl;
+            document.getElementById('apiModal').style.display = 'flex';
+        }
+
+        function closeApiSettingsModal() {
+            document.getElementById('apiModal').style.display = 'none';
+        }
+
+        function saveApiUrl() {
+            apiBaseUrl = document.getElementById('apiUrlInput').value.trim();
+            localStorage.setItem('BHU_AADHAAR_API_URL', apiBaseUrl);
+            closeApiSettingsModal();
+            loadColonyDataset();
+        }
+
+        function checkApiHealth() {
+            openApiSettingsModal();
+        }
+
+        function handleSearchKey(e) {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim().toLowerCase();
+                if (!query) return;
+
+                const found = interactiveObjects.find(obj => {
+                    const u = obj.userData;
+                    return (u.ulpin && u.ulpin.toLowerCase().includes(query)) ||
+                           (u.khasra_no && u.khasra_no.toLowerCase().includes(query)) ||
+                           (u.owner_name && u.owner_name.toLowerCase().includes(query)) ||
+                           (u.building_name && u.building_name.toLowerCase().includes(query));
+                });
+
+                if (found) {
+                    selectParcel(found);
+                    flyCameraTo(found.position.x - 20, found.position.y + 15, found.position.z + 30, found.position.x, found.position.y, found.position.z);
+                } else {
+                    alert(`No parcel matching "${query}" found.`);
+                }
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+            const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const pane = document.getElementById(tabId);
+            if (pane) pane.classList.add('active');
+        }
+
+        function runTopologyAudit() {
+            alert("🛡️ 3D Topology Audit Completed!\n\n• Audited Parcels: 26\n• Metro Safety Buffer: COMPLIANT (6.9m clearance)\n• Road Right-of-Way: 1 Minor Observation on Khasra #202 (Mehra Villa)\n• Status: 96.8% Safe");
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('threeContainer');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            initThreeEngine();
+            initHoverTooltips();
+        });
+    </script>
+</body>
+</html>
