@@ -24,3 +24,9 @@ Thumbs.db
 
 # Backups
 *.bak
+
+# Office documents and presentations
+*.docx
+*.doc
+*.pptx
+*.ppt
